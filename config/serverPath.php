@@ -21,3 +21,4 @@ define('PARTIALS_PATH', BASE_PATH . 'partials');
 define('BACKEND_PATH', BASE_URL . 'backend/');
 define('AJAX_PATH', BASE_URL . 'ajax/');
 define('UPLOADS_PATH', BASE_URL . 'uploads/');
+define('UPLOADS_DIR', BASE_PATH . 'uploads/');
