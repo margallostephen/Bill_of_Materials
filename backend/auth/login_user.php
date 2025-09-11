@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/../../config/serverPath.php';
+require_once __DIR__ . '/../../config/constants.php';
 require_once PHP_UTILS_PATH . 'isValidPostRequest.php';
 require_once CONFIG_PATH . 'db.php';
 
@@ -72,12 +72,12 @@ $_SESSION = [
     'FIRST_NAME' => $userHrisData['F_NAME'],
     'LAST_NAME' => $userHrisData['L_NAME'],
     'EMAIL' => $userHrisData['EMAIL'],
-    'ROLE' => $user['ROLE_ID'],   
+    'ROLE' => $user['ROLE_ID'],
     'ROLE_NAME' => $user['ROLE_NAME'],
     'LAST_ACTIVITY' => time(),
 ];
 
-unset($user['PASSWORD']); 
+unset($user['PASSWORD']);
 $response = ['status' => true, 'message' => 'Logging in.', 'user' => $_SESSION];
 
 $hrisMysqli->close();

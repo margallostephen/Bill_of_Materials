@@ -1,8 +1,8 @@
 <?php
 
 session_start();
-require_once __DIR__ . '/config/serverPath.php';
-require_once __DIR__ . '/config/clientPath.php';
+require_once __DIR__ . '/config/constants.php';
+require_once __DIR__ . '/config/client_path.php';
 require_once PHP_HELPERS_PATH . 'getAssetPath.php';
 
 $routes = require CONFIG_PATH . 'routes.php';

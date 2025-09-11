@@ -1,7 +1,8 @@
 <?php
 define('BASE_PATH', realpath(__DIR__ . '/../') . '/');
 define('BASE_URL', '/' . basename(BASE_PATH) . '/');
-define('SYSTEM_NAME', 'Bill of Materials');
+define('SYSTEM_NAME', 'Bill of Materials Management System');
+define('COMPANY_NAME', 'Prima Tech Phils., Inc.');
 
 define('CONFIG_PATH', BASE_PATH . 'config/');
 

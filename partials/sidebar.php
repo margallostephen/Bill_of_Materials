@@ -1,4 +1,4 @@
-<?php require_once CONFIG_PATH . 'serverPath.php'; ?>
+<?php require_once CONFIG_PATH . 'constants.php'; ?>
 
 <div id="sidebar" class="sidebar responsive ace-save-state">
     <ul class="nav nav-list">
@@ -11,7 +11,7 @@
         <?php if (isset($_SESSION['ROLE']) && in_array($_SESSION['ROLE'], $routes['bill_of_materials/list'])): ?>
             <li>
                 <a href="#" class="dropdown-toggle">
-                    <i class="menu-icon fa fa-users"></i>
+                    <i class="menu-icon fa fa-boxes-packing"></i>
                     <span class="menu-text">
                         Bill of Materials
                     </span>
@@ -31,7 +31,6 @@
     </ul>
 
     <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
-        <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state"
-            data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+        <i id="sidebar-toggle-icon" class="ace-save-state ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
     </div>
 </div>
