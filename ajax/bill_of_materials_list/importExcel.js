@@ -26,10 +26,16 @@ $("#importExcelForm").submit(function (e) {
         success: (response) => {
             if (!sessionValidityChecker(response, bomTable)) return;
 
+            console.log(response);
+
             if (response.status) {
                 showToast("success", response.message, importBtn);
-                $("#modalImport").modal("hide");
-                $("#importExcelForm")[0].reset();
+
+                populateTable(bomTable, "bill_of_materials/get_data");
+
+                resetModal("modalImport", "importExcelForm")
+
+                console.log(response.data);
             } else {
                 showToast("warning", response.message, importBtn);
             }
@@ -37,7 +43,7 @@ $("#importExcelForm").submit(function (e) {
         error: (error) => errorFunction(error, importBtn),
         complete: () => {
             $('#execute_spinner').hide();
-            $('#execute_btn_text').text('EXECUTE');
+            $('#execute_btn_text').text('Submit');
             $('#submitImportExcelBtn').prop('disabled', false).text("Submit");
         }
     });
