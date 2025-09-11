@@ -1,7 +1,7 @@
-function sessionValidityChecker(response, table) {
+function sessionValidityChecker(response, tabulatorObject) {
     if (response.status == "invalid") {
-        table.replaceData([]);
-        resetLoader($(table.element).attr("id"));
+        tabulatorObject.replaceData([]);
+        resetLoader($(tabulatorObject.element).attr("id"));
         localStorage.setItem('session expired', true);
         showToast("info", response.message);
         setTimeout(() => $("#logoutBtn").trigger("click"), 1000);

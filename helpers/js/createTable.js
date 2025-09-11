@@ -1,13 +1,25 @@
-function createTable(id, columns = []) {
+function createTable(id, columns = [], options = {}, actionFormatter) {
     return new Tabulator(`#${id}`, {
-        height: "740px",
-        layout: "fitDataFill",
         autoResize: true,
-        pagination: "local",
-        paginationSize: 15,
-        paginationCounter: "rows",
-        paginationSizeSelector: [15, 100, 250, 500, 1000, true],
-        columns: columns,
-        groupBy: "b"
+        columns: [
+            {
+                field: "RID",
+                hozAlign: "center",
+                vertAlign: "middle",
+                visible: false,
+            },
+            ...columns,
+            {
+                title: "ACTIONS",
+                field: "ACTIONS",
+                hozAlign: "center",
+                headerSort: false,
+                frozen: true,
+                cssClass: "action-column",
+                formatter: actionFormatter
+            }
+        ],
+        height: "712px",
+        ...options
     });
 }
