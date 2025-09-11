@@ -7,7 +7,8 @@
 
     <link rel="icon" type="image/x-icon" href="<?php getImagePath('prima-icon.png') ?>">
     <link rel="stylesheet" href="<?php getCSSFile('bootstrap.min.css') ?>" />
-    <link rel="stylesheet" href="<?php getCSSFile('font-awesome.min.css') ?>" />
+    <link rel="stylesheet" href="<?php getCSSFile('font-awesome-7.0.min.css') ?>" />
+    <link rel="stylesheet" href="<?php getCSSFile('font-awesome-4.5.min.css') ?>" />
     <link rel="stylesheet" href="<?php getCSSFile('ace.min.css') ?>" class="ace-main-stylesheet" id="main-ace-style" />
     <link rel="stylesheet" href="<?php getCSSFile('ace-skins.min.css') ?>" />
     <link rel="stylesheet" href="<?php getCSSFile('ace-rtl.min.css') ?>" />
