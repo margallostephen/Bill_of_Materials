@@ -10,7 +10,7 @@
         <div class="navbar-header pull-left">
             <a href="#" class="navbar-brand">
                 <small>
-                    <?php echo SYSTEM_NAME; ?>
+                    <?php echo strtoupper(COMPANY_NAME); ?>
                 </small>
             </a>
         </div>

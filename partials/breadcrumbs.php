@@ -87,7 +87,7 @@ $label = ucwords(
         <ul class="breadcrumb" style="display: flex; align-items: center;">
             <i id="bc-icon" class="fa"></i>
             <li>
-                <a href="<?php echo BASE_URL ?>"><?php echo SYSTEM_NAME ?></a>
+                <a href="<?php echo BASE_URL ?>"><?php echo strtoupper(SYSTEM_NAME) ?></a>
             </li>
             <li class="active"><?php echo $label ?></li>
         </ul>
