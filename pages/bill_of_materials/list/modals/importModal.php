@@ -19,7 +19,7 @@
                         <span id="execute_spinner" hidden>
                             <i class="ace-icon fa fa-spinner fa-spin white"></i>
                         </span>
-                        <span id="execute_btn_text"> Submit</span>
+                        <span id="execute_btn_text">Submit</span>
                     </button>
                     <button type="button" class="btn btn-sm btn-default closeModalBtn"
                         data-dismiss="modal">Close</button>
