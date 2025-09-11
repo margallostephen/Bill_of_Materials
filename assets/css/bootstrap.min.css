@@ -325,8 +325,29 @@ body {
 
 @font-face {
     font-family: 'Glyphicons Halflings';
-    src: url(../fonts/glyphicons-halflings-regular.eot);
-    src: url(../fonts/glyphicons-halflings-regular.eot?#iefix) format('embedded-opentype'), url(../fonts/glyphicons-halflings-regular.woff2) format('woff2'), url(../fonts/glyphicons-halflings-regular.woff) format('woff'), url(../fonts/glyphicons-halflings-regular.ttf) format('truetype'), url(../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular) format('svg')
+    src: url(../fonts_awesome_4.5/glyphicons-halflings-regular.eot);
+    src: url(../fonts_awesome_4.5/glyphicons-halflings-regular.eot?#iefix) format('embedded-opentype'), url(../fonts_awesome_4.5/glyphicons-halflings-regular.woff2) format('woff2'), url(../fonts_awesome_4.5/glyphicons-halflings-regular.woff) format('woff'), url(../fonts_awesome_4.5/glyphicons-halflings-regular.ttf) format('truetype'), url(../fonts_awesome_4.5/glyphicons-halflings-regular.svg#glyphicons_halflingsregular) format('svg')
+}
+
+/* FontAwesome 4.5 */
+@font-face {
+    font-family: 'FontAwesome4';
+    src: url('../fonts_awesome_4.5/fontawesome-webfont.woff2?v=4.5.0') format('woff2'),
+        url('../fonts_awesome_4.5/fontawesome-webfont.woff?v=4.5.0') format('woff'),
+        url('../fonts_awesome_4.5/fontawesome-webfont.ttf?v=4.5.0') format('truetype'),
+        url('../fonts_awesome_4.5/fontawesome-webfont.svg?v=4.5.0#fontawesomeregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* FontAwesome 7 (example: Solid style, weight 900) */
+@font-face {
+    font-family: 'FontAwesome7Solid';
+    src: url('../fonts_awesome_7.0/fa-solid-900.woff2') format('woff2'),
+        url('../fonts_awesome_7.0/fa-solid-900.woff') format('woff'),
+        url('../fonts_awesome_7.0/fa-solid-900.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
 }
 
 .glyphicon {

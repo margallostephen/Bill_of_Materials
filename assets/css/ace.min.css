@@ -107,6 +107,11 @@ li.divider:before {
     padding: 10px;
 }
 
+.content-container {
+    padding: 0 10px;
+    width: 100%;
+}
+
 .page-header {
     margin: 0 0 12px;
     border-bottom: 1px dotted #E2E2E2;
@@ -1256,7 +1261,8 @@ pre.prettyprint {
     text-shadow: none;
     padding-top: 10px;
     padding-bottom: 10px;
-    height: auto
+    height: auto;
+    font-weight: bolder;
 }
 
 .navbar .navbar-brand:focus,
@@ -1672,9 +1678,13 @@ pre.prettyprint {
         right: auto
     }
 
+    .navbar .navbar-header.pull-left {
+        justify-content: flex-start;
+    }
+
     .navbar:not(.navbar-collapse) .navbar-header {
         float: none !important;
-        display: block
+        display: block;
     }
 
     .navbar:not(.navbar-collapse) .ace-nav {
@@ -1763,7 +1773,6 @@ pre.prettyprint {
 }
 
 .user-info {
-    max-width: 100px;
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2607,18 +2616,15 @@ body.mob-safari .sidebar.sidebar-fixed {
     border-style: solid;
     border-width: 0 0 1px;
     text-align: center;
-    padding: 3px 0;
-    position: relative
+    position: relative;
 }
 
 .sidebar .sidebar-toggle>.ace-icon {
-    padding: 0 5px;
-    line-height: 18px;
     cursor: pointer;
-    font-size: 14px;
-    border-radius: 100%;
-    border: 1px solid;
-    position: relative
+    font-size: 16px;
+    line-height: 1;
+    position: relative;
+    width: 100%;
 }
 
 .sidebar .sidebar-toggle:before {
@@ -2629,7 +2635,8 @@ body.mob-safari .sidebar.sidebar-fixed {
     position: absolute;
     left: 15px;
     right: 15px;
-    top: 13px
+    top: 13px;
+    display: none;
 }
 
 .sidebar .sidebar-shortcuts {
@@ -3201,10 +3208,8 @@ body.mob-safari .sidebar.sidebar-fixed {
 }
 
 .sidebar.menu-min .sidebar-toggle>.ace-icon {
-    font-size: 13px;
-    padding: 0 4px;
     line-height: 15px;
-    border-width: 1px
+    border-width: 1px;
 }
 
 .sidebar.menu-min .nav-list>li>.submenu li>.submenu>li>a {
@@ -5350,14 +5355,23 @@ body.mob-safari .sidebar.sidebar-fixed {
     display: inline-block
 }
 
+i#bc-icon {
+    margin-right: 5px;
+}
+
+.main-content-inner>div.breadcrumbs {
+    border-bottom: 1px solid #E5E5E5;
+}
+
 .breadcrumbs {
     position: relative;
     z-index: auto;
-    border-bottom: 1px solid #E5E5E5;
     background-color: #F5F5F5;
     min-height: 41px;
     line-height: 40px;
-    padding: 0 12px 0 0
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
 }
 
 .breadcrumb {
@@ -5367,7 +5381,9 @@ body.mob-safari .sidebar.sidebar-fixed {
     padding: 0;
     font-size: 13px;
     color: #333;
-    border-radius: 0
+    margin: 0;
+    align-items: end !important;
+    border-radius: 0;
 }
 
 .breadcrumb>li,
@@ -12150,13 +12166,6 @@ tr.detail-row>td {
     padding: 0;
     box-shadow: none;
     border: 1px solid #CCC
-}
-
-@media only screen and (max-width:767px) {
-    .widget-box {
-        margin-top: 7px;
-        margin-bottom: 7px
-    }
 }
 
 .widget-header {
@@ -22202,7 +22211,8 @@ input.typeahead.scrollable~.tt-menu {
 .no-skin .sidebar-toggle>.ace-icon {
     border-color: #BBB;
     color: #AAA;
-    background-color: #FFF
+    background-color: #FFF;
+    padding: 5px
 }
 
 .no-skin .sidebar-shortcuts {
@@ -22270,6 +22280,7 @@ input.typeahead.scrollable~.tt-menu {
 }
 
 .no-skin .sidebar.menu-min .nav-list>li>.submenu {
+    padding: 0px;
     background-color: #FFF;
     border: 1px solid #CCC;
     border-top-color: #e6e6e6;
@@ -22304,7 +22315,8 @@ input.typeahead.scrollable~.tt-menu {
 }
 
 .no-skin .sidebar.menu-min .sidebar-toggle>.ace-icon {
-    border-color: #b1b1b1
+    border-color: #b1b1b1;
+    width: 100%;
 }
 
 @media (max-width:991px) {

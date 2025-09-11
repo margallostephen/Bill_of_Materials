@@ -39,3 +39,14 @@ body#login-body {
 .toggle-form-con {
   margin-top: 15px;
 }
+
+#systemLabel,
+form label {
+  font-weight: bold;
+}
+
+#loginForm .form-element:nth-child(1),
+#registerForm .form-element:nth-child(1),
+#registerForm .form-element:nth-child(2) {
+  margin-bottom: 10px;
+}

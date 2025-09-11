@@ -61,22 +61,6 @@ h2 {
   font-size: 10px;
 }
 
-div.breadcrumbs {
-  padding: 0px;
-  display: flex;
-  align-items: center;
-  padding: 0 5px;
-}
-
-ul.breadcrumb {
-  margin: 0;
-  align-items: end !important;
-}
-
-i#bc-icon {
-  margin-right: 5px;
-}
-
 .btn {
   border-width: 1px;
 }
@@ -90,8 +74,23 @@ i#bc-icon {
   flex-wrap: wrap;
 }
 
+.table-btn-container {
+  margin-bottom: 8px;
+}
+
 .side-btn-container {
   justify-content: flex-end;
+}
+
+.no-data-message {
+  display: none;
+  min-height: 712px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  border: solid 1px #ddd;
+  padding: 20px 10px;
 }
 
 .tabulator {
@@ -102,19 +101,75 @@ i#bc-icon {
 .tabulator .tabulator-col {
   background-color: #F8F8F8 !important;
   border-right: 1px solid #ddd !important;
+  justify-content: end !important;
+}
+
+.tabulator .tabulator-col[tabulator-field="DIVISION"],
+.tabulator .tabulator-col[tabulator-field="SUPPLIER"] {
+  justify-content: center !important;
+}
+
+.tabulator .tabulator-col[tabulator-field="QTY"],
+.tabulator .tabulator-col[tabulator-field="UNIT"] {
+  justify-content: start !important;
+}
+
+.tabulator .tabulator-col[tabulator-field="PROD_QT"],
+.tabulator .tabulator-col[tabulator-field="S_R_QT"],
+.tabulator .tabulator-col[tabulator-field="TOTAL_QT"],
+.tabulator .tabulator-col[tabulator-field="G_PCS_QT"],
+.tabulator .tabulator-col[tabulator-field="C_TIME_QT"],
+.tabulator .tabulator-col[tabulator-field="PROD_AT"],
+.tabulator .tabulator-col[tabulator-field="S_R_AT"],
+.tabulator .tabulator-col[tabulator-field="TOTAL_AT"],
+.tabulator .tabulator-col[tabulator-field="G_PCS_AT"],
+.tabulator .tabulator-col[tabulator-field="C_TIME_AT"],
+.tabulator .tabulator-col[tabulator-field="PROD_AP"],
+.tabulator .tabulator-col[tabulator-field="S_R_AP"],
+.tabulator .tabulator-col[tabulator-field="TOTAL_AP"],
+.tabulator .tabulator-col[tabulator-field="G_PCS_AP"],
+.tabulator .tabulator-col[tabulator-field="C_TIME_AP"],
+.tabulator .tabulator-col[tabulator-field="MC_1"],
+.tabulator .tabulator-col[tabulator-field="TON_1"],
+.tabulator .tabulator-col[tabulator-field="MC_2"],
+.tabulator .tabulator-col[tabulator-field="TON_2"],
+.tabulator .tabulator-col[tabulator-field="MC_3"],
+.tabulator .tabulator-col[tabulator-field="TON_3"],
+.tabulator .tabulator-col[tabulator-field="MC_4"],
+.tabulator .tabulator-col[tabulator-field="TON_4"],
+.tabulator .tabulator-col[tabulator-field="MC_5"],
+.tabulator .tabulator-col[tabulator-field="TON_5"],
+.tabulator .tabulator-col[tabulator-field="MC_1_AP_4M"],
+.tabulator .tabulator-col[tabulator-field="TON_1_AP_4M"],
+.tabulator .tabulator-col[tabulator-field="MC_2_AP_4M"],
+.tabulator .tabulator-col[tabulator-field="TON_2_AP_4M"] {
+  justify-content: center !important;
+}
+
+.tabulator-cell.approve-4m-col,
+.tabulator-col.approve-4m-col {
+  background-color: #FFF2CC !important;
+}
+
+.tabulator .tabulator-col .tabulator-col-title {
+  text-align: center;
+}
+
+.tabulator .tabulator-header .tabulator-col.action-column .tabulator-col-content {
+  height: 62px;
 }
 
 .tabulator-row .tabulator-cell {
   border: 1px #ced4da solid;
 }
 
-.tabulator .tabulator-row .tabulator-cell[tabulator-field="REASON"] {
-  cursor: pointer;
-  background: #fdf5c8 !important;
-}
-
 .tabulator .tabulator-row .action-column {
   min-width: fit-content;
+  padding: 4px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .tabulator .tabulator-col:last-of-type,
@@ -141,7 +196,6 @@ i#bc-icon {
 
 .tabulator .tabulator-row .tabulator-cell {
   cursor: default;
-  height: 50px !important;
   border: none !important;
   border-right: solid 1px #ced4da !important;
 }
@@ -150,7 +204,6 @@ i#bc-icon {
   margin: 0 4px;
 }
 
-.tabulator .tabulator-footer .tabulator-page.active,
 .tabulator .tabulator-row .tabulator .tabulator-footer .tabulator-page-size {
   color: #393939;
 }
@@ -187,7 +240,7 @@ i#bc-icon {
 .tabulator-col .clear-icon {
   background-color: #FFFFFF;
   position: absolute;
-  top: 55.5%;
+  top: 56.5%;
   right: 9px;
   z-index: 1;
   font-size: 14px;
@@ -286,7 +339,7 @@ form input[type=text] {
 }
 
 .loader-container {
-  height: 740px;
+  height: 712px;
   display: flex;
   gap: 10px;
   flex-direction: column;
