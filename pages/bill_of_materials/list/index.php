@@ -23,7 +23,7 @@
                                         <div class="p-4">
                                             <div class="table-btn-container">
                                                 <button type="button" class="btn btn-sm btn-success"
-                                                    id="exportExcelBtn">
+                                                    id="addBtn">
                                                     <i class="ace-icon fa fa-plus"></i>
                                                     <span>
                                                         Add
@@ -71,8 +71,9 @@
     <?php require_once 'modals/importModal.php'; ?>
 </body>
 
-<script type="text/javascript" src="<?php getAjaxPath('bill_of_materials_list/importExcel.js') ?>"></script>
 <script type="text/javascript" src="<?php getAjaxPath('bill_of_materials_list/populateTable.js') ?>"></script>
+<script type="text/javascript" src="<?php getAjaxPath('bill_of_materials_list/importExcel.js') ?>"></script>
+<script type="text/javascript" src="<?php getAjaxPath('bill_of_materials_list/exportExcel.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('createTable.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('addResetFilter.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('resetLoader.js') ?>"></script>
@@ -347,7 +348,7 @@
                 }]
             },
             {
-                title: '2ST MC',
+                title: '2ND MC',
                 columns: [{
                     title: "MC#",
                     field: "MC_2",
@@ -361,7 +362,7 @@
                 }]
             },
             {
-                title: '3ST MC',
+                title: '3RD MC',
                 columns: [{
                     title: "MC#",
                     field: "MC_3",
@@ -375,7 +376,7 @@
                 }]
             },
             {
-                title: '4ST MC',
+                title: '4TH MC',
                 columns: [{
                     title: "MC#",
                     field: "MC_4",
@@ -389,7 +390,7 @@
                 }]
             },
             {
-                title: '5ST MC',
+                title: '5TH MC',
                 columns: [{
                     title: "MC#",
                     field: "MC_5",
@@ -424,7 +425,7 @@
                 }]
             },
             {
-                title: "2ST MC",
+                title: "2ND MC",
                 cssClass: "approve-4m-col",
                 columns: [{
                     title: "MC#",
@@ -448,9 +449,9 @@
         bomColumns, {
             layout: "fitDataFill",
             pagination: "local",
-            paginationSize: 15,
+            paginationSize: 100,
             paginationCounter: "rows",
-            paginationSizeSelector: [15, 100, 250, 500, 1000, true],
+            paginationSizeSelector: [100, 250, 500, 1000, true],
             dataTree: true,
             dataTreeStartExpanded: true,
             dataTreeChildField: "children",
