@@ -11,6 +11,25 @@
     transform: translateZ(0)
 }
 
+.tabulator .tabulator-tableHolder::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.tabulator .tabulator-tableHolder::-webkit-scrollbar-track {
+    background: #f3f3f3;
+}
+
+.tabulator .tabulator-tableHolder::-webkit-scrollbar-thumb {
+    background: #666;
+    border-radius: 6px;
+}
+
+.tabulator .tabulator-tableHolder {
+    scrollbar-width: thin;
+    scrollbar-color: #666 #f3f3f3;
+}
+
 .tabulator[tabulator-layout=fitDataFill] .tabulator-tableholder .tabulator-table {
     min-width: 100%
 }

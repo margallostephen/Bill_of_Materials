@@ -19,7 +19,7 @@ function createTable(id, columns = [], options = {}, actionFormatter) {
                 formatter: actionFormatter
             }
         ],
-        height: "712px",
+        height: "100%",
         ...options
     });
 }

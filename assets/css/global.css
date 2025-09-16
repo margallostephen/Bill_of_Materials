@@ -84,7 +84,8 @@ h2 {
 
 .no-data-message {
   display: none;
-  min-height: 712px;
+  /* min-height: 712px; */
+  min-height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -339,7 +340,8 @@ form input[type=text] {
 }
 
 .loader-container {
-  height: 712px;
+  /* height: 712px; */
+  height: 100%;
   display: flex;
   gap: 10px;
   flex-direction: column;
