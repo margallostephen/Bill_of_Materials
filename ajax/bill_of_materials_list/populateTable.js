@@ -17,7 +17,9 @@ function populateTable(tabulatorObject, path, data = []) {
 
             if (!sessionValidityChecker(response, tabulatorObject)) return;
 
-            const tableData = response.bomList;
+            const grouped = response.bomList;
+
+            const tableData = Object.values(grouped).flat();
 
             if (tableData.length > 0) {
                 tabulatorObject.setData(tableData).then(() => {

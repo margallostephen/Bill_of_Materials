@@ -9,9 +9,9 @@ SELECT
         d.RID,
         d.DIVISION,
         p.CUSTOMER,
-        p.MODEL,
+        CASE WHEN d.ROW_TYPE = 0 THEN p.MODEL ELSE m.MODEL END AS MODEL,
         p.PART_CODE,
-        p.ERP_CODE,
+        CASE WHEN d.ROW_TYPE = 0 THEN p.ERP_CODE ELSE m.ERP_CODE END AS ERP_CODE,
         CASE WHEN d.ROW_TYPE = 0 THEN p.PART_CODE ELSE m.MATERIAL_CODE END AS CODE,
         CASE WHEN d.ROW_TYPE = 0 THEN p.PART_NAME ELSE m.MATERIAL_NAME END AS DESCRIPTION,
         d.PROCESS,
@@ -25,9 +25,9 @@ SELECT
         d.BARCODE,
         d.LABEL_CUSTOMER,
         p.PART_SURROGATE,
-        d.PART_SURROGATE AS DETAIL_PS,
+        d.PART_SURROGATE,
         m.MATERIAL_SURROGATE,
-        d.MATERIAL_SURROGATE AS MATERIAL_SURROGATE,
+        d.MATERIAL_SURROGATE,
 
         -- Weight + CT (pivoted)
         w.PROD_QT, w.S_R_QT, w.TOTAL_QT, w.G_PCS_QT, w.C_TIME_QT,
@@ -53,23 +53,23 @@ SELECT
     LEFT JOIN (
         SELECT 
             CASE WHEN ROW_TYPE = 0 THEN PART_SURROGATE ELSE MATERIAL_SURROGATE END AS SURROGATE,
-            MAX(CASE WHEN COL_TYPE=0 THEN PROD_G END) AS PROD_QT,
-            MAX(CASE WHEN COL_TYPE=0 THEN S_R_G END) AS S_R_QT,
-            MAX(CASE WHEN COL_TYPE=0 THEN TOTAL END) AS TOTAL_QT,
-            MAX(CASE WHEN COL_TYPE=0 THEN G_PCS END) AS G_PCS_QT,
-            MAX(CASE WHEN COL_TYPE=0 THEN C_TIME END) AS C_TIME_QT,
+            MAX(CASE WHEN COL_TYPE = 0 THEN COALESCE(NULLIF(PROD_G, 0), '') END) AS PROD_QT,
+            MAX(CASE WHEN COL_TYPE = 0 THEN COALESCE(NULLIF(S_R_G, 0), '') END) AS S_R_QT,
+            MAX(CASE WHEN COL_TYPE = 0 THEN COALESCE(NULLIF(TOTAL, 0), '') END) AS TOTAL_QT,
+            MAX(CASE WHEN COL_TYPE = 0 THEN COALESCE(NULLIF(G_PCS, 0), '') END) AS G_PCS_QT,
+            MAX(CASE WHEN COL_TYPE = 0 THEN COALESCE(NULLIF(C_TIME, 0), '') END) AS C_TIME_QT,
 
-            MAX(CASE WHEN COL_TYPE=1 THEN PROD_G END) AS PROD_AT,
-            MAX(CASE WHEN COL_TYPE=1 THEN S_R_G END) AS S_R_AT,
-            MAX(CASE WHEN COL_TYPE=1 THEN TOTAL END) AS TOTAL_AT,
-            MAX(CASE WHEN COL_TYPE=1 THEN G_PCS END) AS G_PCS_AT,
-            MAX(CASE WHEN COL_TYPE=1 THEN C_TIME END) AS C_TIME_AT,
+            MAX(CASE WHEN COL_TYPE = 1 THEN COALESCE(NULLIF(PROD_G, 0), '') END) AS PROD_AT,
+            MAX(CASE WHEN COL_TYPE = 1 THEN COALESCE(NULLIF(S_R_G, 0), '') END) AS S_R_AT,
+            MAX(CASE WHEN COL_TYPE = 1 THEN COALESCE(NULLIF(TOTAL, 0), '') END) AS TOTAL_AT,
+            MAX(CASE WHEN COL_TYPE = 1 THEN COALESCE(NULLIF(G_PCS, 0), '') END) AS G_PCS_AT,
+            MAX(CASE WHEN COL_TYPE = 1 THEN COALESCE(NULLIF(C_TIME, 0), '') END) AS C_TIME_AT,
 
-            MAX(CASE WHEN COL_TYPE=2 THEN PROD_G END) AS PROD_AP,
-            MAX(CASE WHEN COL_TYPE=2 THEN S_R_G END) AS S_R_AP,
-            MAX(CASE WHEN COL_TYPE=2 THEN TOTAL END) AS TOTAL_AP,
-            MAX(CASE WHEN COL_TYPE=2 THEN G_PCS END) AS G_PCS_AP,
-            MAX(CASE WHEN COL_TYPE=2 THEN C_TIME END) AS C_TIME_AP
+            MAX(CASE WHEN COL_TYPE = 2 THEN COALESCE(NULLIF(PROD_G, 0), '') END) AS PROD_AP,
+            MAX(CASE WHEN COL_TYPE = 2 THEN COALESCE(NULLIF(S_R_G, 0), '') END) AS S_R_AP,
+            MAX(CASE WHEN COL_TYPE = 2 THEN COALESCE(NULLIF(TOTAL, 0), '') END) AS TOTAL_AP,
+            MAX(CASE WHEN COL_TYPE = 2 THEN COALESCE(NULLIF(G_PCS, 0), '') END) AS G_PCS_AP,
+            MAX(CASE WHEN COL_TYPE = 2 THEN COALESCE(NULLIF(C_TIME, 0), '') END) AS C_TIME_AP
         FROM weight_ct_tb
         GROUP BY SURROGATE
         ORDER BY RID ASC
@@ -102,23 +102,36 @@ SELECT
         ON (d.ROW_TYPE = 0 AND d.PART_SURROGATE = mc.SURROGATE)
         OR (d.ROW_TYPE = 1 AND d.MATERIAL_SURROGATE = mc.SURROGATE)
 
-    ORDER BY d.RID ASC;
+    ORDER BY d.RID ASC, CUSTOMER DESC
 ";
 
 $result = $bomMysqli->query($query);
 
 $bomList = [];
 $currentIndex = -1;
+$currentCustomer = null;
+$prevCustomer = "";
 
 while ($row = $result->fetch_assoc()) {
+    $customer = $row['CUSTOMER'];
+
+    $customer = $customer == "" ? $prevCustomer : $customer;
+
+    if (!isset($bomList[$customer])) {
+        $bomList[$customer] = [];
+        $currentIndex = -1;
+    }
+
     if ($row['DIVISION'] == 1) {
         $currentIndex++;
-        $bomList[$currentIndex] = array_merge($row, ['children' => []]);
+        $bomList[$customer][$currentIndex] = array_merge($row, ['children' => []]);
     } else {
         if ($currentIndex >= 0) {
-            $bomList[$currentIndex]['children'][] = $row;
+            $bomList[$customer][$currentIndex]['children'][] = $row;
         }
     }
+
+    $prevCustomer = $customer;
 }
 
 echo json_encode([

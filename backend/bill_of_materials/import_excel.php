@@ -1,16 +1,18 @@
 <?php
-date_default_timezone_set('Asia/Manila');
-header('Content-Type: application/json');
-
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
-use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once '../../vendor/autoload.php';
 require_once __DIR__ . '/../../config/constants.php';
 require_once PHP_UTILS_PATH . 'isValidPostRequest.php';
 require_once CONFIG_PATH . 'db.php';
 require_once PHP_UTILS_PATH . 'getIPAddress.php';
 require_once PHP_HELPERS_PATH . 'sessionChecker.php';
+
+date_default_timezone_set('Asia/Manila');
+header('Content-Type: application/json');
+
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+
 
 $response = [
     'status' => false,
@@ -76,6 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
         $currentSpreadsheet = $reader->load($savedFilePath);
         $currentSheet = $currentSpreadsheet->getActiveSheet();
 
+        if ($currentSheet->getSheetState() !== Worksheet::SHEETSTATE_VISIBLE) {
+            continue;
+        }
+
         $highestRow = $currentSheet->getHighestDataRow();
         $highestCol = $currentSheet->getHighestDataColumn();
         $highestColIndex = Coordinate::columnIndexFromString($highestCol);
@@ -101,8 +107,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
 
         $insertMaterial = $bomMysqli->prepare("
                 INSERT INTO material_tb 
-                (PART_SURROGATE, MATERIAL_SURROGATE, MATERIAL_KEY, MATERIAL_CODE, MATERIAL_NAME, CREATED_BY, CREATED_IP, CREATED_AT)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                (PART_SURROGATE, MATERIAL_SURROGATE, MATERIAL_KEY, MODEL, ERP_CODE, MATERIAL_CODE, MATERIAL_NAME, CREATED_BY, CREATED_IP, CREATED_AT)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
 
         $insertDetails = $bomMysqli->prepare("
@@ -232,10 +238,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
                     ]));
 
                     $insertMaterial->bind_param(
-                        "ssisssss",
+                        "ssisssssss",
                         $partSurrogate,
                         $materialSurrogate,
                         $materialKey,
+                        $model,
+                        $erpCode,
                         $code,
                         $description,
                         $userRfid,
@@ -287,7 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
                     $gpc = round((float) getVal($currentSheet, $startingWeightCtColIndex + 3, $rowIndex), 2);
                     $ctime = round((float) getVal($currentSheet, $startingWeightCtColIndex + 4, $rowIndex), 2);
 
-                    if (!empty($prod) && !empty($sr) && !empty($total) && !empty($gpc) && !empty($ctime)) {
+                    if (!empty($prod) || !empty($sr) || !empty($total) || !empty($gpc) || !empty($ctime)) {
                         $insertWeightCt->bind_param(
                             "dddddsssisss",
                             $prod,
@@ -317,7 +325,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
                     $mc = getVal($currentSheet, $startingMcColIndex, $rowIndex);
                     $ton = getVal($currentSheet, $startingMcColIndex + 1, $rowIndex);
 
-                    if (!empty($mc) && !empty($ton)) {
+                    if (!empty($mc) || !empty($ton)) {
                         $insertMc->bind_param(
                             "ssisisssss",
                             $mc,
