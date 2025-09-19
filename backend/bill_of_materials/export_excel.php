@@ -79,6 +79,9 @@ try {
         ->setName('Tahoma')
         ->setSize(10);
 
+    $currentSheet = $spreadsheet->getActiveSheet();
+    $currentSheet->setTitle('Bill of Materials');
+
     $writeRow = function ($sheet, $row, &$rowNum, $colMap, $level = 0) {
         foreach ($row as $field => $value) {
             if (!isset($colMap[$field])) continue;
@@ -120,61 +123,43 @@ try {
         $rowNum++;
     };
 
-    $sheetStartRow = 4;
-    $firstRow = $sheetStartRow;
-    $prevCustomer = "";
+    $headerRow = 1;
+    $firstCol = 1;
+    $maxDepth = 3;
+    renderHeaders($currentSheet, $headerTree, $headerRow, $firstCol, $maxDepth);
+
+    $highestCol = $currentSheet->getHighestColumn();
+    $currentSheet->getStyle("A1:{$highestCol}{$maxDepth}")
+        ->getFont()->setBold(true);
+
+    $currentSheet->getStyle("A1:{$highestCol}{$maxDepth}")
+        ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
+        ->setVertical(Alignment::VERTICAL_CENTER);
+
+    $currentSheet->getStyle('A2:AP3')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('E9EFF6');
+
+    $currentSheet->getStyle('AQ1:AT3')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('FFF2CC');
+
+    $currentSheet->getStyle('A1:AT3')->getFont()->setBold(true);
+
+    $currentSheet->getStyle('A1:AT3')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+
+    foreach (array_merge(range('A', 'J'), ['M']) as $firstCol) {
+        $currentSheet->getStyle("{$firstCol}2")->getBorders()->getBottom()->setBorderStyle(Border::BORDER_NONE);
+        $currentSheet->getStyle("{$firstCol}3")->getBorders()->getTop()->setBorderStyle(Border::BORDER_NONE);
+    }
+
+    foreach (range(1, 3) as $r) $currentSheet->getRowDimension($r)->setRowHeight(25);
+
+    $currentSheet->freezePane('I4');
+
+    $currentSheet->setAutoFilter("A3:Q3");
+
+    $currentSheet->setShowSummaryBelow(false);
+
+    $firstRow = 4;
 
     foreach ($tableData as $row) {
-        $currentCustomer = $row["CUSTOMER"];
-
-        if ($currentCustomer != "" && $currentCustomer != $prevCustomer) {
-            $prevCustomer = $currentCustomer;
-
-            if ($spreadsheet->getSheetCount() == 1 && $firstRow == 4) {
-                $currentSheet = $spreadsheet->getActiveSheet();
-                $currentSheet->setTitle(substr($currentCustomer, 0, 31));
-            } else {
-                $currentSheet = $spreadsheet->createSheet();
-                $currentSheet->setTitle(substr($currentCustomer, 0, 31));
-            }
-
-            $firstRow = $sheetStartRow;
-
-            $headerRow = 1;
-            $firstCol = 1;
-            $maxDepth = 3;
-            renderHeaders($currentSheet, $headerTree, $headerRow, $firstCol, $maxDepth);
-
-            $highestCol = $currentSheet->getHighestColumn();
-            $currentSheet->getStyle("A1:{$highestCol}{$maxDepth}")
-                ->getFont()->setBold(true);
-
-            $currentSheet->getStyle("A1:{$highestCol}{$maxDepth}")
-                ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
-                ->setVertical(Alignment::VERTICAL_CENTER);
-
-            $currentSheet->getStyle('A2:AP3')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('E9EFF6');
-
-            $currentSheet->getStyle('AQ1:AT3')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('FFF2CC');
-
-            $currentSheet->getStyle('A1:AT3')->getFont()->setBold(true);
-
-            $currentSheet->getStyle('A1:AT3')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
-
-            foreach (array_merge(range('A', 'J'), ['M']) as $firstCol) {
-                $currentSheet->getStyle("{$firstCol}2")->getBorders()->getBottom()->setBorderStyle(Border::BORDER_NONE);
-                $currentSheet->getStyle("{$firstCol}3")->getBorders()->getTop()->setBorderStyle(Border::BORDER_NONE);
-            }
-
-            foreach (range(1, 3) as $r) $currentSheet->getRowDimension($r)->setRowHeight(25);
-
-            $currentSheet->freezePane('I4');
-
-            $currentSheet->setAutoFilter("A3:Q3");
-
-            $currentSheet->setShowSummaryBelow(false);
-        }
-
         $writeRow($currentSheet, $row, $firstRow, $colMap, 0);
 
         if (!empty($row['children'])) {
@@ -211,80 +196,78 @@ try {
         "AS:AT"
     ];
 
-    foreach ($spreadsheet->getAllSheets() as $sheet) {
-        $lastRow = $sheet->getHighestRow();
-        $lastColumn = $sheet->getHighestColumn();
-        $lastColIndex = Coordinate::columnIndexFromString($lastColumn);
+    $lastRow = $currentSheet->getHighestRow();
+    $lastColumn = $currentSheet->getHighestColumn();
+    $lastColIndex = Coordinate::columnIndexFromString($lastColumn);
 
-        foreach ($groups as $col) {
-            if (strpos($col, ":") !== false) {
-                [$start, $end] = array_map('trim', explode(":", $col));
-                $range = "{$start}3:{$end}{$lastRow}";
+    foreach ($groups as $col) {
+        if (strpos($col, ":") !== false) {
+            [$start, $end] = array_map('trim', explode(":", $col));
+            $range = "{$start}3:{$end}{$lastRow}";
 
-                if (in_array($start, ['K', 'N', 'P'])) {
-                    $startIdx = Coordinate::columnIndexFromString($start);
-                    $endIdx   = Coordinate::columnIndexFromString($end);
+            if (in_array($start, ['K', 'N', 'P'])) {
+                $startIdx = Coordinate::columnIndexFromString($start);
+                $endIdx   = Coordinate::columnIndexFromString($end);
 
-                    for ($c = $startIdx; $c <= $endIdx; $c++) {
-                        $colLetter = Coordinate::stringFromColumnIndex($c);
-                        $colRange  = "{$colLetter}3:{$colLetter}{$lastRow}";
+                for ($c = $startIdx; $c <= $endIdx; $c++) {
+                    $colLetter = Coordinate::stringFromColumnIndex($c);
+                    $colRange  = "{$colLetter}3:{$colLetter}{$lastRow}";
 
-                        $sheet->getStyle($colRange)->applyFromArray([
-                            'borders' => [
-                                'top'    => ['borderStyle' => Border::BORDER_THIN],
-                                'bottom' => ['borderStyle' => Border::BORDER_THIN],
-                                'left'   => ['borderStyle' => Border::BORDER_HAIR],
-                                'right'  => ['borderStyle' => Border::BORDER_HAIR],
-                            ],
-                        ]);
-                    }
-                } else {
-                    $sheet->getStyle($range)->applyFromArray([
+                    $currentSheet->getStyle($colRange)->applyFromArray([
                         'borders' => [
-                            'allBorders' => ['borderStyle' => Border::BORDER_HAIR],
+                            'top'    => ['borderStyle' => Border::BORDER_THIN],
+                            'bottom' => ['borderStyle' => Border::BORDER_THIN],
+                            'left'   => ['borderStyle' => Border::BORDER_HAIR],
+                            'right'  => ['borderStyle' => Border::BORDER_HAIR],
                         ],
                     ]);
                 }
             } else {
-                $range = "{$col}4:{$col}{$lastRow}";
+                $currentSheet->getStyle($range)->applyFromArray([
+                    'borders' => [
+                        'allBorders' => ['borderStyle' => Border::BORDER_HAIR],
+                    ],
+                ]);
             }
-
-            $sheet->getStyle($range)->applyFromArray([
-                'borders' => [
-                    'left'  => ['borderStyle' => Border::BORDER_THIN],
-                    'right' => ['borderStyle' => Border::BORDER_THIN],
-                ],
-            ]);
+        } else {
+            $range = "{$col}4:{$col}{$lastRow}";
         }
 
-        $sheet->getStyle("A{$lastRow}:AT{$lastRow}")
-            ->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THIN);
-
-        $sheet->getStyle("A4:AT{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
-            ->setVertical(Alignment::VERTICAL_CENTER);
-
-        $sheet->getStyle("AQ4:AT{$lastRow}")
-            ->getFill()->setFillType(Fill::FILL_SOLID)
-            ->getStartColor()->setARGB('FFF2CC');
-
-        $sheet->getStyle("A4:AT{$lastRow}")
-            ->getAlignment()->setWrapText(true);
-
-        for ($col = 1; $col <= $lastColIndex; $col++) {
-            $colLetter = Coordinate::stringFromColumnIndex($col);
-            $sheet->getColumnDimension($colLetter)->setAutoSize(true);
-        }
-
-        $sheet->calculateColumnWidths();
-
-        $sheet->getStyle("G4:G{$lastRow}")
-            ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
-
-        $sheet->getStyle("K4:K{$lastRow}")
-            ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
-
-        $sheet->getSheetView()->setZoomScale(75);
+        $currentSheet->getStyle($range)->applyFromArray([
+            'borders' => [
+                'left'  => ['borderStyle' => Border::BORDER_THIN],
+                'right' => ['borderStyle' => Border::BORDER_THIN],
+            ],
+        ]);
     }
+
+    $currentSheet->getStyle("A{$lastRow}:AT{$lastRow}")
+        ->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THIN);
+
+    $currentSheet->getStyle("A4:AT{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
+        ->setVertical(Alignment::VERTICAL_CENTER);
+
+    $currentSheet->getStyle("AQ4:AT{$lastRow}")
+        ->getFill()->setFillType(Fill::FILL_SOLID)
+        ->getStartColor()->setARGB('FFF2CC');
+
+    $currentSheet->getStyle("A4:AT{$lastRow}")
+        ->getAlignment()->setWrapText(true);
+
+    for ($col = 1; $col <= $lastColIndex; $col++) {
+        $colLetter = Coordinate::stringFromColumnIndex($col);
+        $currentSheet->getColumnDimension($colLetter)->setAutoSize(true);
+    }
+
+    $currentSheet->calculateColumnWidths();
+
+    $currentSheet->getStyle("G4:G{$lastRow}")
+        ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+
+    $currentSheet->getStyle("K4:K{$lastRow}")
+        ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+
+    $currentSheet->getSheetView()->setZoomScale(75);
 
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment;filename="bom_export.xlsx"');
