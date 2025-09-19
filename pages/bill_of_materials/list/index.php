@@ -26,7 +26,7 @@
                                                     id="addBtn">
                                                     <i class="ace-icon fa fa-plus"></i>
                                                     <span>
-                                                        Add
+                                                        Add New Item
                                                     </span>
                                                 </button>
                                                 <div class="side-btn-container">
@@ -42,6 +42,13 @@
                                                         <i class="ace-icon fa fa-download"></i>
                                                         <span>
                                                             Export Data
+                                                        </span>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-warning" id="clearAllFilterBtn"
+                                                        disabled>
+                                                        <i class="fa-solid fa-arrow-rotate-right"></i>
+                                                        <span id="btn-clear-text">
+                                                            Reset Filter
                                                         </span>
                                                     </button>
                                                 </div>
@@ -69,6 +76,7 @@
     </div>
 
     <?php require_once 'modals/importModal.php'; ?>
+    <?php require_once 'modals/addModal.php'; ?>
 </body>
 
 <script type="text/javascript" src="<?php getAjaxPath('bill_of_materials_list/populateTable.js') ?>"></script>
@@ -77,6 +85,7 @@
 <script type="text/javascript" src="<?php getJSHelper('createTable.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('addResetFilter.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('resetLoader.js') ?>"></script>
+<script type="text/javascript" src="<?php getJSHelper('modalActions.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('resetModal.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('errorFunction.js') ?>"></script>
 
@@ -453,6 +462,7 @@
             paginationCounter: "rows",
             paginationSizeSelector: [100, 250, 500, 1000, true],
             dataTree: true,
+            dataTreeFilter: false,
             dataTreeStartExpanded: true,
             dataTreeChildField: "children",
             rowFormatter: function(row) {
@@ -490,19 +500,10 @@
 
     $(document).ready(function() {
         populateTable(bomTable, "bill_of_materials/get_data");
-
         addResetFilter(bomTable);
-
-        $("#importExcelBtn").click(function() {
-            $("#modalImport").modal("show");
-        });
-
-        $(".closeModalBtn").click(function() {
-            const $modal = $(`#modalImport`);
-
-            $modal.modal("hide");
-            $(`#importExcelForm`)[0].reset();
-        });
+        modalOpen("addBtn", "modalAdd");
+        modalOpen("importExcelBtn", "modalImport");
+        modalClose("closeModalBtn");
     });
 </script>
 
