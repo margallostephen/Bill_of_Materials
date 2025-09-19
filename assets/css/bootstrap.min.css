@@ -6818,9 +6818,9 @@ button.list-group-item-danger.active:hover {
     margin-bottom: 0
 }
 
-.panel-group {
+/* .panel-group {
     margin-bottom: 20px
-}
+} */
 
 .panel-group .panel {
     margin-bottom: 0;
@@ -7162,7 +7162,8 @@ button.close {
 
 .modal-title {
     margin: 0;
-    line-height: 1.42857143
+    line-height: 1.42857143;
+    font-weight: bold;
 }
 
 .modal-body {

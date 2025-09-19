@@ -280,22 +280,166 @@ h2 {
 }
 
 .modal-body {
-  max-height: 685px;
+  /* max-height: 685px; */
   overflow-y: auto;
   position: relative;
-  padding: 6 15;
+}
+
+.modal .modal-no-data-label {
+  text-align: center;
+  padding: 10px 0;
+  display: none;
+}
+
+.modal-scrollspy {
+  position: sticky;
+  top: 0;
+  height: fit-content;
+  padding: 1rem 0;
+  z-index: 9999;
+  background: white;
+  border-bottom: solid 1px #ddd;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: auto;
+}
+
+.modal-scrollspy .scrollspy-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  padding: 0 10px;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.modal-scrollspy .scrollspy-group .scrollspy-item {
+  position: relative;
+  display: block;
+  padding: 5px 10px;
+  margin-bottom: -1px;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+}
+
+.modal .item-tab-content {
+  scroll-margin-top: 45px;
+}
+
+.modal .weightCtInfo,
+.modal .mcInfo {
+  scroll-margin-top: 90px;
+}
+
+.modal .materialFormsCon {
+  scroll-margin-top: 55px;
+}
+
+.material-upper-hr {
+  margin-bottom: 15px;
 }
 
 .form-group {
   margin-bottom: 0;
 }
 
-.form-field-con {
-  padding: 4px 4px;
+.nav-tabs li {
+  position: relative;
+}
+
+.nav-tabs li a {
+  width: 100px;
+}
+
+.nav-tabs #addNewItemTab {
+  padding: 10px;
+  color: #428BCA;
+  width: unset;
+}
+
+.nav-tabs li .item-tab-checkbox {
+  position: absolute;
+  z-index: 3;
+  top: 11px;
+  right: 11px;
+  opacity: 1;
+  height: unset;
+  margin: 0;
+}
+
+.modal .modal-header-action-tab {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal .modal-header-action-tab #removeItemBtn {
+  display: flex;
+  align-items: center;
+}
+
+.modal .tab-pane {
+  padding: 0 5px;
+}
+
+.modal .panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal .panel-title .accordion-toggle {
+  width: 100%;
+}
+
+.modal .panel-title .removeMaterialBtn {
+  padding: 4px;
+  margin: 0 5px;
+  border-radius: 3px;
+}
+
+.modal .panel-title .removeMaterialBtn i {
+  font-size: 14px;
+}
+
+.modal .panel-group .panel-body {
+  padding: 10 20px 15;
+}
+
+.modal .tab-pane .item-field-con {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.modal .tab-pane h5,
+.modal .tab-pane label {
+  font-weight: bold;
+}
+
+.material-header-con {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.weight-ct-group-con,
+.mc-group-con {
+  display: flex;
+}
+
+.weight-ct-field-con {
+  width: 20%;
 }
 
 form input[type=text] {
   padding: 5px 9px 6px !important;
+}
+
+.material-form-con {
+  border: 1px solid #C5D0DC;
+  padding: 10px;
+  margin-top: 10px;
 }
 
 .modal-content input[type=file] {
@@ -368,6 +512,21 @@ form input[type=text] {
   }
 }
 
+@media only screen and (max-width: 995px) {
+  .modal .item-tab-content {
+    scroll-margin-top: 80px;
+  }
+
+  .modal .weightCtInfo,
+  .modal .mcInfo {
+    scroll-margin-top: 105px;
+  }
+
+  .modal .materialFormsCon {
+    scroll-margin-top: 75px;
+  }
+}
+
 @media only screen and (min-width: 992px) {
   .navbar .navbar-brand {
     padding-left: 0 !important;
@@ -377,6 +536,10 @@ form input[type=text] {
 @media only screen and (max-width: 660px) {
   .side-btn-container {
     width: 100%;
+  }
+
+  .modal-scrollspy .scrollspy-group {
+    padding: 0px;
   }
 }
 
@@ -412,5 +575,15 @@ form input[type=text] {
 
   .tabulator .tabulator-footer .tabulator-paginator {
     justify-content: center;
+  }
+
+  .weight-ct-group-con,
+  .mc-group-con {
+    padding: 5px;
+  }
+
+  .weight-ct-field-con,
+  .mc-field-con {
+    padding: 5px;
   }
 }
