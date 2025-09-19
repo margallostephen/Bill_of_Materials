@@ -8,14 +8,14 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <div class="row">
-                            <div class="form-field-con">
+                            <div class="col-xs-12">
                                 <input type="file" class="form-control" id="excelFileImport" accept=".xlsx,.xls" />
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-sm btn-primary" id="submitImportExcelBtn">
+                    <button type="submit" class="btn btn-sm btn-primary">
                         <span id="execute_spinner" hidden>
                             <i class="ace-icon fa fa-spinner fa-spin white"></i>
                         </span>
