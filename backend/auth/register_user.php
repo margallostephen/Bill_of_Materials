@@ -26,7 +26,7 @@ if ($password !== $confirmPassword) {
 }
 
 $sql = "
-    SELECT e.RFID, j.JOB_LEVEL_ID
+    SELECT e.RFID, e.DEPARTMENT_ID, j.JOB_LEVEL_ID
     FROM `1_employee_masterlist_tb` AS e
     INNER JOIN `job_position_tb` AS j
         ON e.JOB_POSITION_ID = j.JOB_POSITION_ID
@@ -64,11 +64,17 @@ $sql = "INSERT INTO `user_tb`
         VALUES (?, ?, ?)";
 $stmt = $bomMysqli->prepare($sql);
 
+$roleId = $employee['JOB_LEVEL_ID'];
+
+if ($employee['DEPARTMENT_ID'] == 22) {
+    $roleId = 4;
+}
+
 $stmt->bind_param(
     "ssi",
     $employee['RFID'],
     $hashedPassword,
-    $employee['JOB_LEVEL_ID']
+    $roleId
 );
 
 if ($stmt->execute()) {
