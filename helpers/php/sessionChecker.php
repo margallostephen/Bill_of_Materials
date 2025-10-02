@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-$timeout = 1500;
+$timeout = 5400;
 
 if (
     !isset($_SESSION['RFID']) ||
