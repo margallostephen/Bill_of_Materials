@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="<?php getCSSFile('toastr.min.css') ?>" />
     <link rel="stylesheet" href="<?php getCSSFile('sweetalert2.min.css') ?>">
     <link rel="stylesheet" href="<?php getCSSFile('tabulator_bootstrap3.min.css') ?>">
+    <link rel="stylesheet" href="<?php getCSSFile('daterangepicker.min.css') ?>" />
     <link rel="stylesheet" href="<?php getCSSFile('jquery-ui.min.css') ?>" />
     <link rel="stylesheet" href="<?php getCSSFile('global.css') ?>">
 
@@ -30,6 +31,8 @@
     </script>
     <script type="text/javascript" src="<?php getJSFile('bootstrap.min.js') ?>"></script>
     <script type="text/javascript" src="<?php getJSFile('select2.min.js') ?>"></script>
+    <script type="text/javascript" src="<?php getJSFile('moment.min.js') ?>"></script>
+    <script type="text/javascript" src="<?php getJSFile('daterangepicker.min.js') ?>"></script>
     <script type="text/javascript" src="<?php getJSFile('jquery-ui.min.js') ?>"></script>
     <script type="text/javascript" src="<?php getJSFile('ace-elements.min.js') ?>"></script>
     <script type="text/javascript" src="<?php getJSFile('ace.min.js') ?>"></script>
