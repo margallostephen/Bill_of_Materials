@@ -7,12 +7,10 @@ require_once CONFIG_PATH . 'db.php';
 
 $response = ['status' => false, 'message' => ''];
 
-// Get inputs
 $rfid = $_POST['rfid'] ?? '';
 $password = $_POST['password'] ?? '';
 $confirmPassword = $_POST['confirm_password'] ?? '';
 
-// Validate inputs
 if (empty($rfid) || empty($password) || empty($confirmPassword)) {
     $response['message'] = 'All fields are required.';
     echo json_encode($response);
@@ -26,7 +24,7 @@ if ($password !== $confirmPassword) {
 }
 
 $sql = "
-    SELECT e.RFID, e.DEPARTMENT_ID, j.JOB_LEVEL_ID
+    SELECT e.RFID, e.EMPLOYEE_NAME, e.DEPARTMENT_ID, j.JOB_LEVEL_ID
     FROM `1_employee_masterlist_tb` AS e
     INNER JOIN `job_position_tb` AS j
         ON e.JOB_POSITION_ID = j.JOB_POSITION_ID
@@ -60,8 +58,8 @@ if ($bomResult->num_rows > 0) {
 $hashedPassword = password_hash($password, PASSWORD_ARGON2ID);
 
 $sql = "INSERT INTO `user_tb` 
-        (RFID, PASSWORD, ROLE_ID) 
-        VALUES (?, ?, ?)";
+        (RFID, USERNAME, PASSWORD, ROLE_ID) 
+        VALUES (?, ?, ?, ?)";
 $stmt = $bomMysqli->prepare($sql);
 
 $roleId = $employee['JOB_LEVEL_ID'];
@@ -71,8 +69,9 @@ if ($employee['DEPARTMENT_ID'] == 22) {
 }
 
 $stmt->bind_param(
-    "ssi",
+    "sssi",
     $employee['RFID'],
+    $employee['EMPLOYEE_NAME'],
     $hashedPassword,
     $roleId
 );
