@@ -1,4 +1,5 @@
 <?php
+ini_set('max_execution_time', 0);
 require_once '../../vendor/autoload.php';
 require_once __DIR__ . '/../../config/constants.php';
 require_once PHP_UTILS_PATH . 'isValidPostRequest.php';
@@ -8,22 +9,36 @@ require_once PHP_HELPERS_PATH . 'sessionChecker.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Style\{Fill, Alignment, Border};
 
 $input = json_decode(file_get_contents("php://input"), true);
 $headerTree = $input['header'] ?? [];
 $tableData  = $input['data'] ?? [];
+$errorResponse = [
+    "status"  => "error",
+    "message" => "Invalid request method."
+];
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Content-Type: application/json');
+    http_response_code(405);
+    echo json_encode($errorResponse);
+    exit;
+}
+
+if (empty($headerTree) || empty($tableData)) {
+    header('Content-Type: application/json');
+    http_response_code(422);
+    $errorResponse["status"] = "warning";
+    $errorResponse["message"] = empty($headerTree) ? "Header definition is missing." : "No data to export.";
+    echo json_encode($errorResponse);
+    exit;
+} else {
+    $headerTree = array_slice($headerTree, 0, -3, true);
+}
 
 try {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception("Invalid request method");
-    }
-
-    if (empty($headerTree)) {
-        throw new Exception("Header definition is missing");
-    }
-
     $colMap = [
         'DIVISION' => "A",
         'CUSTOMER' => "B",
@@ -74,7 +89,6 @@ try {
     ];
 
     $spreadsheet = new Spreadsheet();
-
     $spreadsheet->getDefaultStyle()->getFont()
         ->setName('Tahoma')
         ->setSize(10);
@@ -82,7 +96,26 @@ try {
     $currentSheet = $spreadsheet->getActiveSheet();
     $currentSheet->setTitle('Bill of Materials');
 
-    $writeRow = function ($sheet, $row, &$rowNum, $colMap, $level = 0) {
+    $styleDivision1 = [
+        'fill' => [
+            'fillType' => Fill::FILL_SOLID,
+            'startColor' => ['argb' => '92D050'],
+        ],
+        'borders' => [
+            'top'    => ['borderStyle' => Border::BORDER_THIN],
+            'bottom' => ['borderStyle' => Border::BORDER_THIN],
+        ],
+    ];
+
+    $styleDefault = [
+        'borders' => [
+            'top'    => ['borderStyle' => Border::BORDER_HAIR],
+            'bottom' => ['borderStyle' => Border::BORDER_HAIR],
+        ],
+    ];
+
+    $writeRow = function ($sheet, $row, &$rowNum, $colMap, $level = 0)
+    use ($styleDivision1, $styleDefault) {
         foreach ($row as $field => $value) {
             if (!isset($colMap[$field])) continue;
 
@@ -101,23 +134,9 @@ try {
         $sheet->getRowDimension($rowNum)->setOutlineLevel($level);
 
         if (isset($row['DIVISION']) && $row['DIVISION'] == 1) {
-            $sheet->getStyle("A{$rowNum}:Q{$rowNum}")->applyFromArray([
-                'fill' => [
-                    'fillType' => Fill::FILL_SOLID,
-                    'startColor' => ['argb' => '92D050'],
-                ],
-                'borders' => [
-                    'top' => ['borderStyle' => Border::BORDER_THIN],
-                    'bottom' => ['borderStyle' => Border::BORDER_THIN],
-                ],
-            ]);
+            $sheet->getStyle("A{$rowNum}:Q{$rowNum}")->applyFromArray($styleDivision1);
         } else {
-            $sheet->getStyle("A{$rowNum}:Q{$rowNum}")->applyFromArray([
-                'borders' => [
-                    'top' => ['borderStyle' => Border::BORDER_HAIR],
-                    'bottom' => ['borderStyle' => Border::BORDER_HAIR],
-                ],
-            ]);
+            $sheet->getStyle("A{$rowNum}:Q{$rowNum}")->applyFromArray($styleDefault);
         }
 
         $rowNum++;
@@ -152,9 +171,7 @@ try {
     foreach (range(1, 3) as $r) $currentSheet->getRowDimension($r)->setRowHeight(25);
 
     $currentSheet->freezePane('I4');
-
     $currentSheet->setAutoFilter("A3:Q3");
-
     $currentSheet->setShowSummaryBelow(false);
 
     $firstRow = 4;
@@ -162,45 +179,64 @@ try {
     foreach ($tableData as $row) {
         $writeRow($currentSheet, $row, $firstRow, $colMap, 0);
 
-        if (!empty($row['children'])) {
-            foreach ($row['children'] as $child) {
+        if (!empty($row['_children'])) {
+            foreach ($row['_children'] as $child) {
                 $writeRow($currentSheet, $child, $firstRow, $colMap, 1);
             }
         }
     }
 
-    $groups = [
-        "A",
-        "B",
-        "C",
-        "D",
-        "E",
-        "F",
-        "G",
-        "H",
-        "I",
-        "J",
-        "K:L",
-        "M",
-        "N:O",
-        "P:Q",
-        "R:V",
-        "W:AA",
-        "AB:AF",
-        "AG:AH",
-        "AI:AJ",
-        "AK:AL",
-        "AM:AN",
-        "AO:AP",
-        "AQ:AR",
-        "AS:AT"
+    $groupCols = [
+        "A"      => 10,
+        "B"      => 15,
+        "C"      => 25,
+        "D"      => 18,
+        "E"      => 13,
+        "F"      => 16,
+        "G"      => 68,
+        "H"      => 20,
+        "I"      => 16,
+        "J"      => 22,
+        "K:L"    => 10,
+        "M"      => 16,
+        "N:O"    => 10,
+        "P:Q"    => 28,
+        "R:V"    => 10,
+        "W:AA"   => 10,
+        "AB:AF"  => 10,
+        "AG:AH"  => 10,
+        "AI:AJ"  => 10,
+        "AK:AL"  => 10,
+        "AM:AN"  => 10,
+        "AO:AP"  => 10,
+        "AQ:AR"  => 10,
+        "AS:AT"  => 10,
     ];
 
     $lastRow = $currentSheet->getHighestRow();
     $lastColumn = $currentSheet->getHighestColumn();
     $lastColIndex = Coordinate::columnIndexFromString($lastColumn);
+    $innerSingleColStyle = [
+        'borders' => [
+            'top'    => ['borderStyle' => Border::BORDER_THIN],
+            'bottom' => ['borderStyle' => Border::BORDER_THIN],
+            'left'   => ['borderStyle' => Border::BORDER_HAIR],
+            'right'  => ['borderStyle' => Border::BORDER_HAIR],
+        ],
+    ];
+    $innerGroupedColStyle = [
+        'borders' => [
+            'allBorders' => ['borderStyle' => Border::BORDER_HAIR],
+        ],
+    ];
+    $outerGroupedColStyle = [
+        'borders' => [
+            'left'  => ['borderStyle' => Border::BORDER_THIN],
+            'right' => ['borderStyle' => Border::BORDER_THIN],
+        ],
+    ];
 
-    foreach ($groups as $col) {
+    foreach ($groupCols as $col => $width) {
         if (strpos($col, ":") !== false) {
             [$start, $end] = array_map('trim', explode(":", $col));
             $range = "{$start}3:{$end}{$lastRow}";
@@ -213,53 +249,31 @@ try {
                     $colLetter = Coordinate::stringFromColumnIndex($c);
                     $colRange  = "{$colLetter}3:{$colLetter}{$lastRow}";
 
-                    $currentSheet->getStyle($colRange)->applyFromArray([
-                        'borders' => [
-                            'top'    => ['borderStyle' => Border::BORDER_THIN],
-                            'bottom' => ['borderStyle' => Border::BORDER_THIN],
-                            'left'   => ['borderStyle' => Border::BORDER_HAIR],
-                            'right'  => ['borderStyle' => Border::BORDER_HAIR],
-                        ],
-                    ]);
+                    $currentSheet->getStyle($colRange)->applyFromArray($innerSingleColStyle);
+                    $currentSheet->getColumnDimension($colLetter)->setWidth($width);
                 }
             } else {
-                $currentSheet->getStyle($range)->applyFromArray([
-                    'borders' => [
-                        'allBorders' => ['borderStyle' => Border::BORDER_HAIR],
-                    ],
-                ]);
+                $currentSheet->getStyle($range)->applyFromArray($innerGroupedColStyle);
             }
         } else {
             $range = "{$col}4:{$col}{$lastRow}";
+            $currentSheet->getColumnDimension($col)->setWidth($width);
         }
 
-        $currentSheet->getStyle($range)->applyFromArray([
-            'borders' => [
-                'left'  => ['borderStyle' => Border::BORDER_THIN],
-                'right' => ['borderStyle' => Border::BORDER_THIN],
-            ],
-        ]);
+        $currentSheet->getStyle($range)->applyFromArray($outerGroupedColStyle);
     }
 
     $currentSheet->getStyle("A{$lastRow}:AT{$lastRow}")
         ->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THIN);
 
-    $currentSheet->getStyle("A4:AT{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
-        ->setVertical(Alignment::VERTICAL_CENTER);
+    $currentSheet->getStyle("A4:AT{$lastRow}")->getAlignment()
+        ->setHorizontal(Alignment::HORIZONTAL_CENTER)
+        ->setVertical(Alignment::VERTICAL_CENTER)
+        ->setWrapText(true);
 
     $currentSheet->getStyle("AQ4:AT{$lastRow}")
         ->getFill()->setFillType(Fill::FILL_SOLID)
         ->getStartColor()->setARGB('FFF2CC');
-
-    $currentSheet->getStyle("A4:AT{$lastRow}")
-        ->getAlignment()->setWrapText(true);
-
-    for ($col = 1; $col <= $lastColIndex; $col++) {
-        $colLetter = Coordinate::stringFromColumnIndex($col);
-        $currentSheet->getColumnDimension($colLetter)->setAutoSize(true);
-    }
-
-    $currentSheet->calculateColumnWidths();
 
     $currentSheet->getStyle("G4:G{$lastRow}")
         ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
@@ -273,13 +287,13 @@ try {
     header('Content-Disposition: attachment;filename="bom_export.xlsx"');
     header('Cache-Control: max-age=0');
 
-    $writer = new Xlsx($spreadsheet);
+    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+    $writer->setPreCalculateFormulas(false);
     $writer->save('php://output');
-    exit;
-} catch (Exception $e) {
-    echo json_encode([
-        "status" => "warning",
-        "message" => $e->getMessage()
-    ]);
-    exit;
+} catch (Throwable $err) {
+    header('Content-Type: application/json');
+    http_response_code(500);
+    $errorResponse["message"] = $err->getMessage();
+    $errorResponse["trace"]   = $err->getTraceAsString();
+    echo json_encode($errorResponse);
 }
