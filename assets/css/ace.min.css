@@ -5959,7 +5959,11 @@ i#bc-icon {
     right: 12px;
     bottom: 4px;
     padding: 8px 0 4px 0;
-    border-top: 3px double #E5E5E5
+    border-top: 3px double #E5E5E5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 .footer.footer-fixed .footer-inner {

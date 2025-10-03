@@ -105,13 +105,13 @@ h2 {
   justify-content: end !important;
 }
 
-.tabulator .tabulator-col[tabulator-field="DIVISION"],
 .tabulator .tabulator-col[tabulator-field="SUPPLIER"] {
   justify-content: center !important;
 }
 
 .tabulator .tabulator-col[tabulator-field="QTY"],
-.tabulator .tabulator-col[tabulator-field="UNIT"] {
+.tabulator .tabulator-col[tabulator-field="UNIT"],
+.tabulator .tabulator-col[tabulator-field="REMARKS"] {
   justify-content: start !important;
 }
 
@@ -164,13 +164,22 @@ h2 {
   border: 1px #ced4da solid;
 }
 
+.tabulator-row .tabulator-cell .clickable-cell {
+  cursor: pointer;
+}
+
+.tabulator-row .tabulator-cell .not-clickable {
+  cursor: default !important;
+}
+
 .tabulator .tabulator-row .action-column {
   min-width: fit-content;
   padding: 4px !important;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: right;
   gap: 4px;
+  cursor: not-allowed;
 }
 
 .tabulator .tabulator-col:last-of-type,
@@ -196,7 +205,6 @@ h2 {
 }
 
 .tabulator .tabulator-row .tabulator-cell {
-  cursor: default;
   border: none !important;
   border-right: solid 1px #ced4da !important;
 }
@@ -295,36 +303,67 @@ h2 {
   position: sticky;
   top: 0;
   height: fit-content;
-  padding: 1rem 0;
   z-index: 9999;
   background: white;
   border-bottom: solid 1px #ddd;
   display: flex;
   flex-wrap: wrap;
-  overflow: auto;
 }
 
-.modal-scrollspy .scrollspy-group {
+.modal-scrollspy .header-group {
   display: flex;
-  justify-content: space-between;
+  gap: 10px;
+  justify-content: space-evenly;
   align-items: stretch;
   padding: 0 10px;
   margin-bottom: 0;
   width: 100%;
+  padding: 10px;
 }
 
-.modal-scrollspy .scrollspy-group .scrollspy-item {
+.modal-scrollspy .header-group .scrollspy-item {
+  width: 100%;
   position: relative;
   display: block;
-  padding: 5px 10px;
+  padding: 8px;
   margin-bottom: -1px;
   border: 1px solid #ddd;
   display: flex;
   align-items: center;
+  justify-content: center;
+}
+
+.modal #addItemForm {
+  margin-right: 74px;
+}
+
+.modal-scrollspy #materialScrollSpy {
+  position: absolute;
+  right: 15px;
+  top: 72px;
+  width: 60px;
+  z-index: 99999;
+  scrollbar-width: none;
+  max-height: 375px;
+  overflow: auto;
+  border: solid 1px #ddd;
+  -ms-overflow-style: none;
+}
+
+.modal-scrollspy #materialScrollSpy::-webkit-scrollbar {
+  display: none;
+}
+
+.modal-scrollspy #materialScrollSpy .scrollspy-item {
+  padding: 8px;
 }
 
 .modal .item-tab-content {
   scroll-margin-top: 45px;
+}
+
+.modal .mainInfo {
+  scroll-margin-top: 108px;
 }
 
 .modal .weightCtInfo,
@@ -333,7 +372,7 @@ h2 {
 }
 
 .modal .materialFormsCon {
-  scroll-margin-top: 55px;
+  scroll-margin-top: 60px;
 }
 
 .material-upper-hr {
@@ -374,12 +413,16 @@ h2 {
 }
 
 .modal .modal-header-action-tab #removeItemBtn {
-  display: flex;
-  align-items: center;
+  height: fit-content;
+  padding: 10px;
 }
 
 .modal .tab-pane {
   padding: 0 5px;
+}
+
+.modal .panel-group .panel {
+  scroll-margin-top: 60px;
 }
 
 .modal .panel-title {
@@ -411,6 +454,7 @@ h2 {
   padding-right: 6px;
 }
 
+.modal label,
 .modal .tab-pane h5,
 .modal .tab-pane label {
   font-weight: bold;
@@ -514,7 +558,12 @@ form input[type=text] {
 
 @media only screen and (max-width: 995px) {
   .modal .item-tab-content {
-    scroll-margin-top: 80px;
+    scroll-margin-top: 50px;
+    padding-top: 25px;
+  }
+
+  .modal .mainInfo {
+    scroll-margin-top: 125px;
   }
 
   .modal .weightCtInfo,
@@ -522,8 +571,8 @@ form input[type=text] {
     scroll-margin-top: 105px;
   }
 
-  .modal .materialFormsCon {
-    scroll-margin-top: 75px;
+  .modal .panel-group .panel {
+    scroll-margin-top: 80px;
   }
 }
 
@@ -533,13 +582,24 @@ form input[type=text] {
   }
 }
 
+@media only screen and (max-width: 991px) {
+  .modal .modal-scrollspy #materialScrollSpy {
+    top: 92px;
+  }
+
+  .modal .materialFormsCon {
+    scroll-margin-top: 80px;
+  }
+}
+
 @media only screen and (max-width: 660px) {
   .side-btn-container {
     width: 100%;
   }
 
-  .modal-scrollspy .scrollspy-group {
-    padding: 0px;
+  .modal-scrollspy .header-group {
+    padding: 10px;
+    overflow: auto;
   }
 }
 
