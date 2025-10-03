@@ -8,6 +8,7 @@ $routes = [
     'auth' => [0],
     'dashboard' => $allRoles,
     'bill_of_materials/list' => $allRoles,
+    'bill_of_materials/revision' => $allRoles,
     'error/403' => $allRoles,
     'error/404' => $allRoles,
     'allowed_roles' => $allRoles

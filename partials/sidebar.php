@@ -25,6 +25,12 @@
                             <span class="menu-text">List</span>
                         </a>
                     </li>
+                    <li class="sidebar-btn" id="list">
+                        <a href="<?php echo BASE_URL . 'bill_of_materials/revision' ?>">
+                            <i class="menu-icon fa fa-edit"></i>
+                            <span class="menu-text">Revision</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
         <?php endif; ?>
