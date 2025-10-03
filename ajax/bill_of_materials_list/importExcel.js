@@ -1,10 +1,11 @@
 $("#importExcelForm").submit(function (e) {
     e.preventDefault();
 
+    const $modal = $(this);
     const $fileInput = $("#excelFileImport")[0];
-    const $importBtn = $(this).find("button[type='submit']");
-    const $spinner = $('#execute_spinner');
-    const btnText = $('#execute_btn_text');
+    const $importBtn = $modal.find("button[type='submit']");
+    const $spinner = $modal.find('#execute_spinner');
+    const btnText = $modal.find('#execute_btn_text');
 
     if (!$fileInput.files.length) {
         showToast("warning", "Please select a file.", $importBtn);
@@ -28,15 +29,12 @@ $("#importExcelForm").submit(function (e) {
         success: (response) => {
             if (!sessionValidityChecker(response, bomTable)) return;
 
-            console.log(response);
-
             const responseResult = response.status;
             const toastText = responseResult ? "success" : "warning";
 
             if (responseResult) {
-                populateTable(bomTable, "bill_of_materials/get_data");
                 resetModal("modalImport", "importExcelForm");
-                console.log(response.data);
+                populateTable(bomTable, "bill_of_materials/get_data");
             }
 
             showToast(toastText, response.message, $importBtn);

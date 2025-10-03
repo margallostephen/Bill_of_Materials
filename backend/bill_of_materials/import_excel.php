@@ -1,4 +1,5 @@
 <?php
+ini_set('max_execution_time', 0);
 require_once '../../vendor/autoload.php';
 require_once __DIR__ . '/../../config/constants.php';
 require_once PHP_UTILS_PATH . 'isValidPostRequest.php';
@@ -91,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
         $isPart = true;
         $isNewPart = true;
         $partSurrogate = '';
-        $materialSurrogate = '';
+        $materialSurrogate = $deferredParent = $currentParentSurrogate = '';
         $currentRowsImported = $partsImported = $materialsImported = 0;
         $prevCode = '';
         $materialKey = 1;
@@ -107,8 +108,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
 
         $insertMaterial = $bomMysqli->prepare("
                 INSERT INTO material_tb 
-                (PART_SURROGATE, MATERIAL_SURROGATE, MATERIAL_KEY, MODEL, ERP_CODE, MATERIAL_CODE, MATERIAL_NAME, CREATED_BY, CREATED_IP, CREATED_AT)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (PART_SURROGATE, MATERIAL_SURROGATE, PARENT_SURROGATE, MATERIAL_KEY, MODEL, ERP_CODE, MATERIAL_CODE, MATERIAL_NAME, CREATED_BY, CREATED_IP, CREATED_AT)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
 
         $insertDetails = $bomMysqli->prepare("
@@ -141,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
             list($code, $codeNote) = getValNote($currentSheet, 14, $rowIndex);
             list($description, $descriptionNote) = getValNote($currentSheet, 15, $rowIndex);
             $process = getVal($currentSheet, 16, $rowIndex);
-            $class = getVal($currentSheet, 17, $rowIndex);
+            $class = strtoupper(getVal($currentSheet, 17, $rowIndex));
             $supplier = getVal($currentSheet, 18, $rowIndex);
             $qty = getVal($currentSheet, 19, $rowIndex);
             $unit = getVal($currentSheet, 20, $rowIndex);
@@ -237,10 +238,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
                         $materialKey
                     ]));
 
+                    // $isParentRow = (in_array($class, ["SUB PART", "CHILD PART"]));
+
+                    // if ($isParentRow) {
+                    //     $deferredParent = $materialSurrogate;
+                    // } else {
+                    //     $currentParentSurrogate = $deferredParent;
+                    //     $deferredParent = "";
+                    // }
+
                     $insertMaterial->bind_param(
-                        "ssisssssss",
+                        "sssisssssss",
                         $partSurrogate,
                         $materialSurrogate,
+                        $currentParentSurrogate,
                         $materialKey,
                         $model,
                         $erpCode,
@@ -292,16 +303,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
                     $prod = round((float) getVal($currentSheet, $startingWeightCtColIndex, $rowIndex), 2);
                     $sr = round((float) getVal($currentSheet, $startingWeightCtColIndex + 1, $rowIndex), 2);
                     $total = round((float) getVal($currentSheet, $startingWeightCtColIndex + 2, $rowIndex), 2);
-                    $gpc = round((float) getVal($currentSheet, $startingWeightCtColIndex + 3, $rowIndex), 2);
+                    $gpcs = round((float) getVal($currentSheet, $startingWeightCtColIndex + 3, $rowIndex), 2);
                     $ctime = round((float) getVal($currentSheet, $startingWeightCtColIndex + 4, $rowIndex), 2);
 
-                    if (!empty($prod) || !empty($sr) || !empty($total) || !empty($gpc) || !empty($ctime)) {
+                    if (!empty($prod) || !empty($sr) || !empty($total) || !empty($gpcs) || !empty($ctime)) {
                         $insertWeightCt->bind_param(
                             "dddddsssisss",
                             $prod,
                             $sr,
                             $total,
-                            $gpc,
+                            $gpcs,
                             $ctime,
                             $partSurrogate,
                             $materialSurrogate,
