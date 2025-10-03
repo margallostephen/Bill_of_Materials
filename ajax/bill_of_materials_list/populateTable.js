@@ -11,15 +11,24 @@ function populateTable(tabulatorObject, path, data = []) {
     $.ajax({
         url: `${BACKEND_PATH}/${path}.php`,
         type: 'POST',
+        data: data,
         dataType: 'json',
         success: function (response) {
-            console.log(response);
-
             if (!sessionValidityChecker(response, tabulatorObject)) return;
 
-            const grouped = response.bomList;
+            const bomList = response.bomList;
 
-            const tableData = Object.values(grouped).flat();
+            const flattened = Object.entries(bomList).flatMap(([customer, parts]) =>
+                Object.entries(parts)
+                    .filter(([key]) => !["RID", "DIVISION", "CUSTOMER"].includes(key))
+                    .map(([partKey, partValue]) => ({
+                        customer,
+                        partKey,
+                        ...partValue,
+                    }))
+            );
+
+            const tableData = Object.values(flattened).flat();
 
             if (tableData.length > 0) {
                 tabulatorObject.setData(tableData).then(() => {
