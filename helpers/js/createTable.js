@@ -1,4 +1,4 @@
-function createTable(id, columns = [], options = {}, actionFormatter) {
+function createTable(id, ridOptions = [], columns = [], options = {}) {
     return new Tabulator(`#${id}`, {
         autoResize: true,
         columns: [
@@ -6,18 +6,9 @@ function createTable(id, columns = [], options = {}, actionFormatter) {
                 field: "RID",
                 hozAlign: "center",
                 vertAlign: "middle",
-                visible: false,
+                ...ridOptions
             },
-            ...columns,
-            {
-                title: "ACTIONS",
-                field: "ACTIONS",
-                hozAlign: "center",
-                headerSort: false,
-                frozen: true,
-                cssClass: "action-column",
-                formatter: actionFormatter
-            }
+            ...columns
         ],
         height: "100%",
         ...options
