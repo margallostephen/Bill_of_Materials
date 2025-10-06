@@ -1,5 +1,5 @@
 <?php
-date_default_timezone_set(timezoneId: 'Asia/Manila');
+date_default_timezone_set('Asia/Manila');
 require_once __DIR__ . '/../../config/constants.php';
 require_once PHP_UTILS_PATH . 'isValidPostRequest.php';
 require_once CONFIG_PATH . 'db.php';
@@ -167,7 +167,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requiredItemFields = ['customer', 'master_code', 'part_name'];
     $requiredMaterialFields = ['part_code', 'part_name'];
 
-    $checkDuplicatePart = $bomMysqli->prepare("SELECT 1 FROM part_tb WHERE PART_SURROGATE = ? LIMIT 1");
+    $getMaxPartKey = $bomMysqli->prepare("SELECT MAX(PART_KEY) AS PART_KEY FROM PART_TB WHERE PART_SURROGATE LIKE ?");
+    $getMaxMaterialKey = $bomMysqli->prepare("SELECT MAX(MATERIAL_KEY) AS MATERIAL_KEY FROM MATERIAL_TB WHERE PART_SURROGATE LIKE ?");
 
     $insertPart = $bomMysqli->prepare("
                 INSERT INTO part_tb 
@@ -242,38 +243,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        $partSurrogate = "";
+        $partSurrogateRaw = implode('_', array_filter([
+            $item['master_code'],
+            $item['part_name'],
+            $item['tool'],
+        ]));
 
-        $partIndex = 1;
-        do {
-            $partSurrogate = implode('_', array_filter([
-                $item['master_code'],
-                $item['part_name'],
-                $item['tool'],
-                $partIndex
-            ]));
+        $search = "%{$partSurrogateRaw}%";
+        $getMaxPartKey->bind_param("s", $search);
+        $getMaxPartKey->execute();
+        $result = $getMaxPartKey->get_result();
+        $row = $result->fetch_assoc();
 
-            $checkDuplicatePart->bind_param("s", $partSurrogate);
-            $checkDuplicatePart->execute();
-            $checkDuplicatePart->store_result();
-
-            $exists = $checkDuplicatePart->num_rows > 0;
-            if ($exists) {
-                $partIndex++;
-            }
-        } while ($exists);
+        $partIndex = ($row['PART_KEY'] ?? 0) + 1;
+        $partSurrogate = "{$partSurrogateRaw}_{$partIndex}";
 
         $itemGlobalData = [$item['customer'], $item['model'], $item['master_code']];
 
         insertRowAllData($itemGlobalData, $item, $partSurrogate, $partIndex, $insertPart, $insertDetails, $insertWeightCt, $insertMc, $userRfid, $userIp, $createdAt);
 
-        $materialKey = 1;
+        $search = "%{$partSurrogate}%";
+        $getMaxMaterialKey->bind_param("s", $search);
+        $getMaxMaterialKey->execute();
+        $result = $getMaxMaterialKey->get_result();
+        $row = $result->fetch_assoc();
+        $materialKey = ($row['MATERIAL_KEY'] ?? 0) + 1;
+
         foreach ($item['material'] as $material) {
-            $materialSurrogate = implode('_', array_filter([
-                $partSurrogate,
-                $material['part_name'],
-                $materialKey
-            ]));
+            $materialSurrogate = "{$partSurrogate}_{$material['part_name']}_{$materialKey}";
 
             insertRowAllData($itemGlobalData, $material, $partSurrogate, $partIndex, $insertMaterial, $insertDetails, $insertWeightCt, $insertMc, $userRfid, $userIp, $createdAt, 1, $materialSurrogate, $materialKey);
 
@@ -283,7 +280,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $itemIndexWarningLabel++;
     }
 
-    $checkDuplicatePart->close();
+    $getMaxPartKey->close();
+    $getMaxMaterialKey->close();
     $insertPart->close();
     $insertMaterial->close();
     $insertDetails->close();
