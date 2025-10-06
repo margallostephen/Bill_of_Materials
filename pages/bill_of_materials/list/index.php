@@ -836,7 +836,7 @@
 
                 return `
                 <button class="btn btn-sm btn-danger archiveBtn" data-type="${isPart}" data-type-id="${isPart ? p_id : m_id}">
-                    <i class="fa fa-archive"></i> Acrhive
+                    <i class="fa fa-archive"></i> Archive
                 </button>`;
             },
             minWidth: "40px"
