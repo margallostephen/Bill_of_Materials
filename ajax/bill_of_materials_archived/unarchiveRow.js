@@ -1,7 +1,6 @@
 $(document).on("click", ".unarchiveBtn", function () {
     const unarchiveBtn = $(this);
     const rowData = JSON.parse(decodeURIComponent(unarchiveBtn.attr("data-row")));
-    console.log("Decoded row:", rowData);
     const label = rowData.division == "1" ? "Part" : "Material";
 
     Swal.fire({
@@ -21,13 +20,13 @@ $(document).on("click", ".unarchiveBtn", function () {
                 dataType: "json",
                 data: { row_data: rowData, type: label },
                 success: function (response) {
-                    if (!sessionValidityChecker(response, archivedTable)) return;
+                    if (!sessionValidityChecker(response, archivedBomTable)) return;
 
                     const responseResult = response.status;
                     const toastText = responseResult ? "success" : "warning";
 
                     if (responseResult) {
-                        populateTable(archivedTable, "bill_of_materials/get_data");
+                        populateTable(archivedBomTable, "bill_of_materials/get_data");
                     }
 
                     showToast(toastText, response.message);
