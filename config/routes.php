@@ -9,6 +9,7 @@ $routes = [
     'dashboard' => $allRoles,
     'bill_of_materials/list' => $allRoles,
     'bill_of_materials/revision' => $allRoles,
+    'bill_of_materials/archived' => $allRoles,
     'error/403' => $allRoles,
     'error/404' => $allRoles,
     'allowed_roles' => $allRoles

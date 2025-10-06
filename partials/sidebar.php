@@ -31,6 +31,12 @@
                             <span class="menu-text">Revision</span>
                         </a>
                     </li>
+                    <li class="sidebar-btn" id="list">
+                        <a href="<?php echo BASE_URL . 'bill_of_materials/archived' ?>">
+                            <i class="menu-icon fa fa-box-archive"></i>
+                            <span class="menu-text">Archived</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
         <?php endif; ?>

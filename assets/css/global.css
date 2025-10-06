@@ -78,6 +78,10 @@ h2 {
   margin-bottom: 8px;
 }
 
+.table-btn-container.right {
+  justify-content: end;
+}
+
 .side-btn-container {
   justify-content: flex-end;
 }
