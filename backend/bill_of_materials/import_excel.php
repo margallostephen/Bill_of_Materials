@@ -95,10 +95,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
         $materialSurrogate = $deferredParent = $currentParentSurrogate = '';
         $currentRowsImported = $partsImported = $materialsImported = 0;
         $prevCode = '';
-        $materialKey = 1;
-        $partIndexMap = [];
 
-        $checkDuplicatePart = $bomMysqli->prepare("SELECT 1 FROM part_tb WHERE PART_SURROGATE = ? LIMIT 1");
+        $getMaxPartKey = $bomMysqli->prepare("SELECT MAX(PART_KEY) AS PART_KEY FROM PART_TB WHERE PART_SURROGATE LIKE ?");
+        $getMaxMaterialKey = $bomMysqli->prepare("SELECT MAX(MATERIAL_KEY) AS MATERIAL_KEY FROM MATERIAL_TB WHERE PART_SURROGATE LIKE ?");
 
         $insertPart = $bomMysqli->prepare("
                 INSERT INTO part_tb 
@@ -184,24 +183,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
                 }
 
                 if ($emptyTable) {
-                    $partIndex = 1;
-                    do {
-                        $partSurrogate = implode('_', array_filter([
-                            $partCode,
-                            $description,
-                            $toolNum,
-                            $partIndex
-                        ]));
+                    $partSurrogateRaw = implode('_', array_filter([
+                        $partCode,
+                        $description,
+                        $toolNum
+                    ]));
 
-                        $checkDuplicatePart->bind_param("s", $partSurrogate);
-                        $checkDuplicatePart->execute();
-                        $checkDuplicatePart->store_result();
+                    $search = "%{$partSurrogateRaw}%";
+                    $getMaxPartKey->bind_param("s", $search);
+                    $getMaxPartKey->execute();
+                    $result = $getMaxPartKey->get_result();
+                    $row = $result->fetch_assoc();
 
-                        $exists = $checkDuplicatePart->num_rows > 0;
-                        if ($exists) {
-                            $partIndex++;
-                        }
-                    } while ($exists);
+                    $partIndex = ($row['PART_KEY'] ?? 0) + 1;
+                    $partSurrogate = "{$partSurrogateRaw}_{$partIndex}";
 
                     $insertPart->bind_param(
                         "ssssssisss",
@@ -219,24 +214,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
                     $insertPart->execute();
                 }
 
-                $materialKey = 1;
-                $materialSurrogate = implode('_', array_filter([
-                    $partSurrogate,
-                    $description,
-                    $materialKey
-                ]));
-
                 $partsImported++;
             } else {
                 $isPart = false;
                 $prevCode = $code;
 
                 if ($emptyTable) {
-                    $materialSurrogate = implode('_', array_filter([
-                        $partSurrogate,
-                        $description,
-                        $materialKey
-                    ]));
+
+                    $search = "%{$partSurrogate}%";
+                    $getMaxMaterialKey->bind_param("s", $search);
+                    $getMaxMaterialKey->execute();
+                    $result = $getMaxMaterialKey->get_result();
+                    $row = $result->fetch_assoc();
+
+                    $materialIndex = ($row['MATERIAL_KEY'] ?? 0) + 1;
+                    $materialSurrogate = "{$partSurrogate}_{$description}_{$materialIndex}";
 
                     // $isParentRow = (in_array($class, ["SUB PART", "CHILD PART"]));
 
@@ -252,7 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
                         $partSurrogate,
                         $materialSurrogate,
                         $currentParentSurrogate,
-                        $materialKey,
+                        $materialIndex,
                         $model,
                         $erpCode,
                         $code,
@@ -262,8 +254,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
                         $createdAt
                     );
                     $insertMaterial->execute();
-
-                    $materialKey++;
                 }
                 $materialsImported++;
             }
@@ -367,7 +357,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
             'materials_imported' => $materialsImported,
             'current_total_rows' => $currentRowsImported
         ];
-        $checkDuplicatePart->close();
+        $getMaxPartKey->close();
         $insertPart->close();
         $insertMaterial->close();
         $insertDetails->close();
