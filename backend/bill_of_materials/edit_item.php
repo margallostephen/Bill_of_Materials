@@ -1,5 +1,5 @@
 <?php
-date_default_timezone_set(timezoneId: 'Asia/Manila');
+date_default_timezone_set('Asia/Manila');
 require_once __DIR__ . '/../../config/constants.php';
 require_once PHP_UTILS_PATH . 'isValidPostRequest.php';
 require_once CONFIG_PATH . 'db.php';
@@ -27,6 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($previousValue == $newValue) {
+        echo json_encode([
+            "status" => false,
+            "message" => "New value is same as the previous value."
+        ]);
+        exit;
+    }
+
     $userRfid = $_SESSION['RFID'];
     $userIp = getUserIP();
     $createdAt = $updatedAt = date("Y-m-d H:i:s");
@@ -40,6 +48,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "message" => "Invalid table"
         ]);
         exit;
+    }
+
+    if ($rowType === 0 && in_array($columnField, ['PART_CODE', 'PART_NAME', 'TOOL_NUM'], true)) {
+        $getSql = "SELECT 
+                p.RID,
+                p.PART_CODE,
+                p.PART_NAME, 
+                d.TOOL_NUM,
+                p.PART_KEY
+            FROM part_tb AS p
+            INNER JOIN details_tb AS d 
+                ON p.PART_SURROGATE = d.PART_SURROGATE
+            WHERE 
+                d.ROW_TYPE = 0
+                AND p.PART_SURROGATE = ?";
+
+        $getPartDetails = $bomMysqli->prepare($getSql);
+        $getPartDetails->bind_param("s", $partSurrogate);
+        $getPartDetails->execute();
+
+        $partInfo = $getPartDetails->get_result()->fetch_assoc();
+        $getPartDetails->close();
+
+        $partId = $partInfo['RID'];
+        $partCode = $partInfo['PART_CODE'];
+        $partName = $partInfo['PART_NAME'];
+        $toolNum = $partInfo['TOOL_NUM'];
+        $partKey = $partInfo['PART_KEY'];
+
+        switch ($columnField) {
+            case 'PART_CODE':
+                $partCode = $newValue;
+                break;
+            case 'PART_NAME':
+                $partName = $newValue;
+                break;
+            case 'TOOL_NUM':
+                $toolNum = $newValue;
+                break;
+        }
+
+        $newPartSurrogate = "{$partCode}_{$partName}_{$toolNum}_{$partKey}";
+    }
+
+    if ($rowType === 1 && in_array($columnField, ["MATERIAL_NAME"])) {
+        $getSql = "SELECT RID, MATERIAL_NAME, MATERIAL_KEY, PART_SURROGATE 
+            FROM material_tb WHERE MATERIAL_SURROGATE = ?";
+
+        $getMaterialDetails = $bomMysqli->prepare($getSql);
+        $getMaterialDetails->bind_param("s", $materialSurrogate);
+        $getMaterialDetails->execute();
+
+        $materialInfo = $getMaterialDetails->get_result()->fetch_assoc();
+        $getMaterialDetails->close();
+
+        $materialId = $materialInfo['RID'];
+        $materialName = $newValue ?? $materialInfo['MATERIAL_NAME'];
+        $materialKey = $materialInfo['MATERIAL_KEY'];
+        $materialPartSurrogate = $materialInfo['PART_SURROGATE'];
+
+        $newMaterialSurrogate = "{$materialPartSurrogate}|{$materialName}_{$materialKey}";
     }
 
     if (!empty($rowId)) {
@@ -105,6 +174,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $insertRevisionDetails->bind_param("ssssssss", $surrogate, $columnTitle, $previousValue, $newValue, $remarks, $userRfid, $updatedAt, $userIp);
     $insertRevisionDetails->execute();
     $insertRevisionDetails->close();
+
+    if ($rowType === 0 && in_array($columnField, ['PART_CODE', 'PART_NAME', 'TOOL_NUM'], true)) {
+        $insertSql = "INSERT INTO prev_part_history_tb (
+            `PART_CODE`, `PART_NAME`, `TOOL_NUM`, `PART_KEY`, `PART_SURROGATE`, 
+            `CREATED_BY`, `CREATED_IP`, `CREATED_AT`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $insertDetails = $bomMysqli->prepare($insertSql);
+        $insertDetails->bind_param(
+            "sssissss",
+            $partInfo["PART_CODE"],
+            $partInfo["PART_NAME"],
+            $partInfo["TOOL_NUM"],
+            $partInfo["PART_KEY"],
+            $partSurrogate,
+            $userRfid,
+            $userIp,
+            $createdAt
+        );
+        $insertDetails->execute();
+        $insertDetails->close();
+
+
+        $getMaterialSql = "SELECT RID, MATERIAL_SURROGATE 
+            FROM MATERIAL_TB 
+            WHERE PART_SURROGATE = ?";
+        $getMaterials = $bomMysqli->prepare($getMaterialSql);
+        $getMaterials->bind_param("s", $partSurrogate);
+        $getMaterials->execute();
+        $materialSurrogates = $getMaterials->get_result()->fetch_all(MYSQLI_ASSOC);
+        $getMaterials->close();
+
+        if (!empty($materialSurrogates)) {
+            $caseSql = "UPDATE MATERIAL_TB SET MATERIAL_SURROGATE = CASE RID ";
+            $ids = [];
+
+            foreach ($materialSurrogates as $row) {
+                $suffix = explode('|', $row['MATERIAL_SURROGATE'])[1] ?? '';
+                $newMatSurrogate = "{$newPartSurrogate}|{$suffix}";
+                $escapedMat = $bomMysqli->real_escape_string($newMatSurrogate);
+                $caseSql .= "WHEN {$row['RID']} THEN '{$escapedMat}' ";
+                $ids[] = $row['RID'];
+            }
+
+            $caseSql .= "END WHERE RID IN (" . implode(',', $ids) . ")";
+            $bomMysqli->query($caseSql);
+        }
+
+        $updatePartSurrogateSql = "UPDATE part_tb SET PART_SURROGATE = ? WHERE RID = ?";
+        $updatePartSurrogate = $bomMysqli->prepare($updatePartSurrogateSql);
+        $updatePartSurrogate->bind_param("si", $newPartSurrogate, $partId);
+        $updatePartSurrogate->execute();
+        $updatePartSurrogate->close();
+    }
+
+    if ($rowType === 1 && in_array($columnField, ["MATERIAL_NAME"])) {
+        $updateMaterialSurrogateSql = "UPDATE material_tb SET MATERIAL_SURROGATE = ? WHERE RID = ?";
+        $updateMaterialSurrogate = $bomMysqli->prepare($updateMaterialSurrogateSql);
+        $updateMaterialSurrogate->bind_param("si", $newMaterialSurrogate, $materialId);
+        $updateMaterialSurrogate->execute();
+        $updateMaterialSurrogate->close();
+    }
 
     echo json_encode([
         "status" => true,
