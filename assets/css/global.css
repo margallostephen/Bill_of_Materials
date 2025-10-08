@@ -263,6 +263,10 @@ h2 {
   margin-block-end: 0;
 }
 
+.modal-content .row.group-field-con {
+  padding: 0 5px;
+}
+
 .modal-content input.form-control,
 .select2-container--open .select2-dropdown,
 .modal-content input.form-control::placeholder,

@@ -48,34 +48,34 @@
 </div>
 
 <div class="tab-pane" id="tab-pane-item-template" data-material-count="-1" hidden>
-    <div class="row">
+    <div class="row group-field-con">
         <div class="col-sm-3 item-field-con"><label>Customer</label><input type="text" name="items[itemIndex][customer]" class="form-control"></div>
         <div class="col-sm-3 item-field-con"><label>Model</label><input type="text" name="items[itemIndex][model]" class="form-control"></div>
         <div class="col-sm-3 item-field-con"><label>Master Code</label><input type="text" name="items[itemIndex][master_code]" class="form-control"></div>
         <div class="col-sm-3 item-field-con"><label>ERP Code</label><input type="text" name="items[itemIndex][erp_code]" class="form-control"></div>
     </div>
-    <div class="row">
+    <div class="row group-field-con">
         <div class="col-sm-12 item-field-con"><label>Item Name</label><input type="text" name="items[itemIndex][part_name]" class="form-control"></div>
     </div>
-    <div class="row">
+    <div class="row group-field-con">
         <div class="col-sm-4 item-field-con"><label>Process</label><input type="text" name="items[itemIndex][process]" class="form-control"></div>
         <div class="col-sm-4 item-field-con"><label>Class</label><input type="text" name="items[itemIndex][class]" class="form-control"></div>
         <div class="col-sm-4 item-field-con"><label>Supplier</label><input type="text" name="items[itemIndex][supplier]" class="form-control"></div>
     </div>
-    <div class="row">
+    <div class="row group-field-con">
         <div class="col-sm-3 item-field-con"><label>Quantity</label><input type="text" name="items[itemIndex][qty]" class="form-control"></div>
         <div class="col-sm-3 item-field-con"><label>Unit</label><input type="text" name="items[itemIndex][unit]" class="form-control"></div>
         <div class="col-sm-3 item-field-con"><label>Cavity</label><input type="text" name="items[itemIndex][cavity]" class="form-control"></div>
         <div class="col-sm-3 item-field-con"><label>Tool</label><input type="text" name="items[itemIndex][tool]" class="form-control"></div>
     </div>
-    <div class="row">
+    <div class="row group-field-con">
         <div class="col-sm-4 item-field-con"><label>Status</label><input type="text" name="items[itemIndex][status]" class="form-control"></div>
         <div class="col-sm-4 item-field-con"><label>Barcode</label><input type="text" name="items[itemIndex][barcode]" class="form-control"></div>
         <div class="col-sm-4 item-field-con"><label>Label Customer</label><input type="text" name="items[itemIndex][label_customer]" class="form-control"></div>
     </div>
     <hr>
     <h5>Quotation</h5>
-    <div class="row weight-ct-group-con weightCtInfo"
+    <div class="row group-field-con weight-ct-group-con weightCtInfo"
         id="weightCtInfo">
         <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][weight_ct][0][prod_g]" class="form-control" placeholder="Prod (g)"></div>
         <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][weight_ct][0][sr_g]" class="form-control" placeholder="S&R (g)"></div>
@@ -84,7 +84,7 @@
         <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][weight_ct][0][ctime]" class="form-control" placeholder="C/Time"></div>
     </div>
     <h5>Actual</h5>
-    <div class="row weight-ct-group-con">
+    <div class="row group-field-con weight-ct-group-con">
         <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][weight_ct][1][prod_g]" class="form-control" placeholder="Prod (g)"></div>
         <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][weight_ct][1][sr_g]" class="form-control" placeholder="S&R (g)"></div>
         <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][weight_ct][1][total_g]" class="form-control" placeholder="Total (g)"></div>
@@ -92,7 +92,7 @@
         <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][weight_ct][1][ctime]" class="form-control" placeholder="C/Time"></div>
     </div>
     <h5>Approval</h5>
-    <div class="row weight-ct-group-con">
+    <div class="row group-field-con weight-ct-group-con">
         <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][weight_ct][2][prod_g]" class="form-control" placeholder="Prod (g)"></div>
         <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][weight_ct][2][sr_g]" class="form-control" placeholder="S&R (g)"></div>
         <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][weight_ct][2][total_g]" class="form-control" placeholder="Total (g)"></div>
@@ -101,24 +101,24 @@
     </div>
     <hr>
     <h5>Machines</h5>
-    <div class="row mc-group-con mcInfo" id="mcInfo">
+    <div class="row group-field-con mc-group-con mcInfo" id="mcInfo">
         <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][mc][0][num]" class="form-control" placeholder="1st MC#"></div>
         <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][mc][0][ton]" class="form-control" placeholder="Ton"></div>
         <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][mc][1][num]" class="form-control" placeholder="2nd MC#"></div>
         <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][mc][1][ton]" class="form-control" placeholder="Ton"></div>
     </div>
-    <div class="row mc-group-con" style="margin-top:10px;">
+    <div class="row group-field-con mc-group-con" style="margin-top:10px;">
         <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][mc][2][num]" class="form-control" placeholder="3rd MC#"></div>
         <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][mc][2][ton]" class="form-control" placeholder="Ton"></div>
         <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][mc][3][num]" class="form-control" placeholder="4th MC#"></div>
         <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][mc][3][ton]" class="form-control" placeholder="Ton"></div>
     </div>
-    <div class="row mc-group-con" style="margin-top:10px;">
+    <div class="row group-field-con mc-group-con" style="margin-top:10px;">
         <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][mc][4][num]" class="form-control" placeholder="5th MC#"></div>
         <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][mc][4][ton]" class="form-control" placeholder="Ton"></div>
     </div>
     <h5 style="margin-top:25px;">Internal Approve</h5>
-    <div class="row mc-group-con" style="margin-top:10px;">
+    <div class="row group-field-con mc-group-con" style="margin-top:10px;">
         <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][mc][5][num]" class="form-control" placeholder="1st MC#"></div>
         <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][mc][5][ton]" class="form-control" placeholder="Ton"></div>
         <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][mc][6][num]" class="form-control" placeholder="2nd MC#"></div>
@@ -150,33 +150,33 @@
 
     <div class="panel-collapse collapse in" id="collapseOne" aria-expanded="true">
         <div class="panel-body">
-            <div class="row mainInfo" id="newMaterialMainInfo">
+            <div class="row group-field-con mainInfo" id="newMaterialMainInfo">
                 <div class="col-sm-2 item-field-con"><label>Division</label><input type="text" name="items[itemIndex][material][materialIndex][division]" class="form-control"></div>
                 <div class="col-sm-4 item-field-con"><label>Part Code</label><input type="text" name="items[itemIndex][material][materialIndex][part_code]" class="form-control"></div>
                 <div class="col-sm-6 item-field-con"><label>ERP Code</label><input type="text" name="items[itemIndex][material][materialIndex][erp_code]" class="form-control"></div>
             </div>
-            <div class="row">
+            <div class="row group-field-con">
                 <div class="col-sm-12 item-field-con"><label>Item Name</label><input type="text" name="items[itemIndex][material][materialIndex][part_name]" class="form-control"></div>
             </div>
-            <div class="row">
+            <div class="row group-field-con">
                 <div class="col-sm-4 item-field-con"><label>Process</label><input type="text" name="items[itemIndex][material][materialIndex][process]" class="form-control"></div>
                 <div class="col-sm-4 item-field-con"><label>Class</label><input type="text" name="items[itemIndex][material][materialIndex][class]" class="form-control"></div>
                 <div class="col-sm-4 item-field-con"><label>Supplier</label><input type="text" name="items[itemIndex][material][materialIndex][supplier]" class="form-control"></div>
             </div>
-            <div class="row">
+            <div class="row group-field-con">
                 <div class="col-sm-3 item-field-con"><label>Quantity</label><input type="text" name="items[itemIndex][material][materialIndex][qty]" class="form-control"></div>
                 <div class="col-sm-3 item-field-con"><label>Unit</label><input type="text" name="items[itemIndex][material][materialIndex][unit]" class="form-control"></div>
                 <div class="col-sm-3 item-field-con"><label>Cavity</label><input type="text" name="items[itemIndex][material][materialIndex][cavity]" class="form-control"></div>
                 <div class="col-sm-3 item-field-con"><label>Tool</label><input type="text" name="items[itemIndex][material][materialIndex][tool]" class="form-control"></div>
             </div>
-            <div class="row">
+            <div class="row group-field-con">
                 <div class="col-sm-4 item-field-con"><label>Status</label><input type="text" name="items[itemIndex][material][materialIndex][status]" class="form-control"></div>
                 <div class="col-sm-4 item-field-con"><label>Barcode</label><input type="text" name="items[itemIndex][material][materialIndex][barcode]" class="form-control"></div>
                 <div class="col-sm-4 item-field-con"><label>Label Customer</label><input type="text" name="items[itemIndex][material][materialIndex][label_customer]" class="form-control"></div>
             </div>
             <hr>
             <h5>Quotation</h5>
-            <div class="row weight-ct-group-con weightCtInfo" id="newMaterialWeightCtInfo">
+            <div class="row group-field-con weight-ct-group-con weightCtInfo" id="newMaterialWeightCtInfo">
                 <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][weight_ct][0][prod_g]" class="form-control" placeholder="Prod (g)"></div>
                 <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][weight_ct][0][sr_g]" class="form-control" placeholder="S&R (g)"></div>
                 <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][weight_ct][0][total_g]" class="form-control" placeholder="Total (g)"></div>
@@ -184,7 +184,7 @@
                 <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][weight_ct][0][ctime]" class="form-control" placeholder="C/Time"></div>
             </div>
             <h5>Actual</h5>
-            <div class="row weight-ct-group-con">
+            <div class="row group-field-con weight-ct-group-con">
                 <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][weight_ct][1][prod_g]" class="form-control" placeholder="Prod (g)"></div>
                 <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][weight_ct][1][sr_g]" class="form-control" placeholder="S&R (g)"></div>
                 <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][weight_ct][1][total_g]" class="form-control" placeholder="Total (g)"></div>
@@ -192,7 +192,7 @@
                 <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][weight_ct][1][ctime]" class="form-control" placeholder="C/Time"></div>
             </div>
             <h5>Approval</h5>
-            <div class="row weight-ct-group-con">
+            <div class="row group-field-con weight-ct-group-con">
                 <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][weight_ct][2][prod_g]" class="form-control" placeholder="Prod (g)"></div>
                 <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][weight_ct][2][sr_g]" class="form-control" placeholder="S&R (g)"></div>
                 <div class="col-xs-6 col-sm-2 weight-ct-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][weight_ct][2][total_g]" class="form-control" placeholder="Total (g)"></div>
@@ -201,24 +201,24 @@
             </div>
             <hr>
             <h5>Machines</h5>
-            <div class="row mc-group-con mcInfo" id="newMaterialMcInfo">
+            <div class="row group-field-con mc-group-con mcInfo" id="newMaterialMcInfo">
                 <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][mc][0][num]" class="form-control" placeholder="1st MC#"></div>
                 <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][mc][0][ton]" class="form-control" placeholder="Ton"></div>
                 <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][mc][1][num]" class="form-control" placeholder="2nd MC#"></div>
                 <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][mc][1][ton]" class="form-control" placeholder="Ton"></div>
             </div>
-            <div class="row mc-group-con" style="margin-top:10px;">
+            <div class="row group-field-con mc-group-con" style="margin-top:10px;">
                 <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][mc][2][num]" class="form-control" placeholder="3rd MC#"></div>
                 <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][mc][2][ton]" class="form-control" placeholder="Ton"></div>
                 <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][mc][3][num]" class="form-control" placeholder="4th MC#"></div>
                 <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][mc][3][ton]" class="form-control" placeholder="Ton"></div>
             </div>
-            <div class="row" style="margin-top:10px;">
+            <div class="row group-field-con" style="margin-top:10px;">
                 <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][mc][4][num]" class="form-control" placeholder="5th MC#"></div>
                 <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][mc][4][ton]" class="form-control" placeholder="Ton"></div>
             </div>
             <h5 style="margin-top:25px;">Internal Approve</h5>
-            <div class="row mc-group-con" style="margin-top:10px;">
+            <div class="row group-field-con mc-group-con" style="margin-top:10px;">
                 <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][mc][5][num]" class="form-control" placeholder="1st MC#"></div>
                 <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][mc][5][ton]" class="form-control" placeholder="Ton"></div>
                 <div class="col-xs-6 col-sm-3 mc-field-con item-field-con"><input type="text" name="items[itemIndex][material][materialIndex][mc][6][num]" class="form-control" placeholder="2nd MC#"></div>

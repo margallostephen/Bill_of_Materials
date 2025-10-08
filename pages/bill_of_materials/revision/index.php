@@ -21,7 +21,7 @@
                                 <div class="widget-body">
                                     <div class="widget-main">
                                         <div class="p-4">
-                                            <div class="table-btn-container">
+                                            <div class="table-btn-container right">
                                                 <div class="side-btn-container">
                                                     <button class="btn btn-sm btn-warning" id="clearAllFilterBtn"
                                                         disabled>
