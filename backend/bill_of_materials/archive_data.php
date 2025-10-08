@@ -9,7 +9,7 @@ require_once PHP_HELPERS_PATH . 'sessionChecker.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userRfid   = $_SESSION['RFID'];
     $userIp     = getUserIP();
-    $createdAt  = $updatedAt = date("Y-m-d H:i:s");
+    $createdAt  = $deletedAt = date("Y-m-d H:i:s");
 
     $rowType = strtolower($_POST["type"]);
     $rowId   = (int) $_POST["data_id"];
@@ -35,19 +35,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($surrogate) {
         $sql = "UPDATE $table 
                 SET delete_status = 1, 
-                    UPDATED_BY = ?, 
-                    UPDATED_IP = ?, 
-                    UPDATED_AT = ? 
+                    DELETED_BY = ?, 
+                    DELETED_IP = ?, 
+                    DELETED_AT = ? 
                 WHERE $column = ?";
 
         $stmt = $bomMysqli->prepare($sql);
-        $stmt->bind_param("ssss", $userRfid, $userIp, $updatedAt, $surrogate);
+        $stmt->bind_param("ssss", $userRfid, $userIp, $deletedAt, $surrogate);
 
         if ($stmt->execute()) {
             echo json_encode([
                 "status" => true,
                 "message" => ucfirst($rowType) . " archived successfully."
             ]);
+
+            if ($rowType == "part") {
+                $sql = "UPDATE material_tb 
+                SET DELETE_STATUS = 1, 
+                    DELETED_BY = ?, 
+                    DELETED_IP = ?, 
+                    DELETED_AT = ? 
+                WHERE $column = ?";
+
+                $stmt = $bomMysqli->prepare($sql);
+                $stmt->bind_param("ssss", $userRfid, $userIp, $deletedAt, $surrogate);
+            }
         } else {
             echo json_encode([
                 "status" => false,

@@ -467,6 +467,17 @@
             headerFilterParams: {
                 valuesLookup: true,
             },
+            formatter: function(cell) {
+                const {
+                    ARCHIVED_BY: archived_by,
+                    DELETE_STATUS: delete_status,
+                    PART_DELETE_STATUS: part_delete_status,
+                    ROW_TYPE: row_type
+                } = cell.getData();
+
+                return (row_type == 0 && part_delete_status == 1) || (row_type == 1 && part_delete_status == 0 && delete_status == 1) ?
+                    archived_by : "";
+            },
         },
         {
             title: 'ARCHIVED DATE',
@@ -476,7 +487,18 @@
             headerFilter: "input",
             headerFilterPlaceholder: "YYYY-MM-DD to YYYY-MM-DD",
             headerFilterFunc: (value, rowValue) => setDateRangeFilter(value, rowValue),
-            minWidth: "238px"
+            minWidth: 238,
+            formatter: function(cell) {
+                const {
+                    ARCHIVED_DATE: archived_date,
+                    DELETE_STATUS: delete_status,
+                    PART_DELETE_STATUS: part_delete_status,
+                    ROW_TYPE: row_type
+                } = cell.getData();
+
+                return (row_type == 0 && part_delete_status == 1) || (row_type == 1 && part_delete_status == 0 && delete_status == 1) ?
+                    archived_date : "";
+            },
         },
         {
             title: "ACTIONS",
@@ -484,6 +506,10 @@
             hozAlign: "center",
             headerSort: false,
             frozen: true,
+            width: 107,
+            minWidth: 107,
+            resizable: false,
+            widthGrow: 0,
             cssClass: "action-column",
             formatter: function(cell) {
                 const {
@@ -502,6 +528,8 @@
                     RID_MC_2_AP_4M: mc2_ap_id,
                     DIVISION: division,
                     DELETE_STATUS: delete_status,
+                    PART_DELETE_STATUS: part_delete_status,
+                    ROW_TYPE: row_type
                 } = cell.getData();
 
                 const rowData = {
@@ -522,13 +550,13 @@
                     delete_status
                 };
 
-                return delete_status == 1 ? `
+                return (row_type == 0 && part_delete_status == 1) || (row_type == 1 && part_delete_status == 0 && delete_status == 1) ? `
                 <button class="btn btn-sm btn-danger unarchiveBtn"
                     data-row="${encodeURIComponent(JSON.stringify(rowData))}" >
                     <i class="fa fa-archive"></i> Unarchive
                 </button>` : "";
             },
-            minWidth: "40px"
+            minWidth: 40
         }
     ];
 

@@ -26,7 +26,7 @@ $(document).on("click", ".unarchiveBtn", function () {
                     const toastText = responseResult ? "success" : "warning";
 
                     if (responseResult) {
-                        populateTable(archivedBomTable, "bill_of_materials/get_data");
+                        populateTable(archivedBomTable, "bill_of_materials/get_archived");
                     }
 
                     showToast(toastText, response.message);
