@@ -809,6 +809,10 @@
             hozAlign: "center",
             headerSort: false,
             frozen: true,
+            width: 92,
+            minWidth: 92,
+            resizable: false,
+            widthGrow: 0,
             cssClass: "action-column",
             formatter: function(cell) {
                 const {
