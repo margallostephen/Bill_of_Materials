@@ -229,7 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
 
                     $materialIndex = ($row['MATERIAL_KEY'] ?? 0) + 1;
                     $materialSurrogate = "{$partSurrogate}_{$description}_{$materialIndex}";
-
+                    
                     // $isParentRow = (in_array($class, ["SUB PART", "CHILD PART"]));
 
                     // if ($isParentRow) {
@@ -288,6 +288,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
                 $insertDetails->execute();
 
                 $startingWeightCtColIndex = 26;
+                $partSurrogatePivot = $isPart ? $partSurrogate : NULL;
 
                 for ($i = 0; $i < 3; $i++) {
                     $prod = round((float) getVal($currentSheet, $startingWeightCtColIndex, $rowIndex), 2);
@@ -304,7 +305,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
                             $total,
                             $gpcs,
                             $ctime,
-                            $partSurrogate,
+                            $partSurrogatePivot,
                             $materialSurrogate,
                             $rowType,
                             $i,
@@ -334,7 +335,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
                             $i,
                             $rowType,
                             $approved,
-                            $partSurrogate,
+                            $partSurrogatePivot,
                             $materialSurrogate,
                             $userRfid,
                             $userIp,
