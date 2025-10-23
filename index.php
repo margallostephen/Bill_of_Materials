@@ -30,8 +30,7 @@ if (
 }
 
 if ($route === 'auth' && $userRole !== '0') {
-    $fallbackRoute = $_SESSION['last_route'] ?? $_SESSION['ROLE'] != 3 ? 'dashboard' : 'survey';
-    header("Location: " . BASE_URL . $fallbackRoute);
+    header("Location: " . BASE_URL . 'dashboard');
     exit;
 }
 
