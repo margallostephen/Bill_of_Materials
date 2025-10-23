@@ -1,3 +1,5 @@
+localStorage.setItem("ace_state_id-breadcrumbs", '{"class":{"breadcrumbs-fixed":0}}');
+
 $(document).ready(function () {
     const path = location.pathname;
 
