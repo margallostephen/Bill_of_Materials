@@ -251,6 +251,11 @@
                     headerFilterParams: {
                         valuesLookup: true,
                     },
+                    headerFilterFunc: deepMatchHeaderFilter,
+                    headerFilterFuncParams: {
+                        columnName: "CUSTOMER",
+                        matchType: "exact"
+                    },
                     formatter: cell => setCellAttr(cell, "part"),
                     cellDblClick: cellClick,
                     cssClass: "clickable-cell"
