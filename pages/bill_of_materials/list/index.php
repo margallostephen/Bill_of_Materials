@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php require_once PARTIALS_PATH . '/header.php'; ?>
+<?php $canArchive = $_SESSION['ACCESS_RIGHTS']['BOM_LIST']['DELETE'] ?? false; ?>
 
 <body class="no-skin">
     <?php require_once PARTIALS_PATH . '/navbar.php'; ?>
@@ -21,22 +22,23 @@
                                 <div class="widget-body">
                                     <div class="widget-main">
                                         <div class="p-4">
-                                            <div class="table-btn-container">
-                                                <button type="button" class="btn btn-sm btn-success"
-                                                    id="addBtn">
-                                                    <i class="ace-icon fa fa-plus"></i>
-                                                    <span>
-                                                        Add New Item
-                                                    </span>
-                                                </button>
-                                                <div class="side-btn-container">
-                                                    <button type="button" class="btn btn-sm btn-primary"
-                                                        id="importExcelBtn">
-                                                        <i class="ace-icon fa fa-upload"></i>
-                                                        <span>
-                                                            Import Data
-                                                        </span>
+                                            <div class="table-btn-container <?= !$canArchive ? 'right' : '' ?>">
+                                                <?php if (!empty($_SESSION['ACCESS_RIGHTS']['BOM_LIST']['ADD'])): ?>
+                                                    <button type="button" class="btn btn-sm btn-success" id="addBtn">
+                                                        <i class="ace-icon fa fa-plus"></i>
+                                                        <span>Add New Item</span>
                                                     </button>
+                                                <?php endif; ?>
+                                                <div class="side-btn-container">
+                                                    <?php if (!empty($_SESSION['ACCESS_RIGHTS']['BOM_LIST']['IMPORT'])): ?>
+                                                        <button type="button" class="btn btn-sm btn-primary"
+                                                            id="importExcelBtn">
+                                                            <i class="ace-icon fa fa-upload"></i>
+                                                            <span>
+                                                                Import Data
+                                                            </span>
+                                                        </button>
+                                                    <?php endif; ?>
                                                     <button type="button" class="btn btn-sm btn-success"
                                                         id="exportExcelBtn">
                                                         <i class="ace-icon fa fa-download"></i>
@@ -95,6 +97,8 @@
 <script type="text/javascript" src="<?php getJSHelper('resetModal.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('errorFunction.js') ?>"></script>
 <script type="text/javascript">
+    const archiveVisible = <?= json_encode($canArchive) ?>;
+
     function setCellAttr(cell, table, column = "") {
         const el = cell.getElement();
 
@@ -819,6 +823,7 @@
             resizable: false,
             widthGrow: 0,
             cssClass: "action-column",
+            visible: archiveVisible,
             formatter: function(cell) {
                 const {
                     RID: id,
@@ -844,9 +849,14 @@
                 // }
 
                 return `
-                <button class="btn btn-sm btn-danger archiveBtn" data-type="${isPart}" data-type-id="${isPart ? p_id : m_id}">
-                    <i class="fa fa-archive"></i> Archive
-                </button>`;
+                    ${archiveVisible ? `
+                        <button class="btn btn-sm btn-danger archiveBtn" 
+                                data-type="${isPart}" 
+                                data-type-id="${isPart ? p_id : m_id}">
+                            <i class="fa fa-archive"></i> Archive
+                        </button>
+                    ` : ''}
+                `;
             },
             minWidth: "40px"
         }

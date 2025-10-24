@@ -4,6 +4,7 @@ session_start();
 require_once __DIR__ . '/config/constants.php';
 require_once __DIR__ . '/config/client_path.php';
 require_once PHP_HELPERS_PATH . 'getAssetPath.php';
+require_once PHP_HELPERS_PATH . 'getUserAccess.php';
 
 $routes = require CONFIG_PATH . 'routes.php';
 
@@ -27,6 +28,10 @@ if (
     isset($routes[$route])
 ) {
     $_SESSION['last_route'] = $route;
+}
+
+if (!isset($_SESSION['ACCESS_RIGHTS'])) {
+    $_SESSION['ACCESS_RIGHTS'] = getUserAccess($bomMysqli);
 }
 
 if ($route === 'auth' && $userRole !== '0') {
