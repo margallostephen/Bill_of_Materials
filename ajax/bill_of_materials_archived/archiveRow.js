@@ -3,6 +3,9 @@ $(document).on("click", ".archiveBtn", function () {
     const type = archiveBtn.attr("data-type");
     const label = type == "true" ? "Part" : "Material";
     const dataId = archiveBtn.attr("data-type-id");
+    const partId = archiveBtn.attr("data-part-id");
+    const matCode = archiveBtn.attr("data-mat-code");
+    const matDesc = archiveBtn.attr("data-mat-desc");
 
     Swal.fire({
         title: `Archive ${label}`,
@@ -19,7 +22,7 @@ $(document).on("click", ".archiveBtn", function () {
                 url: `${BACKEND_PATH}/bill_of_materials/archive_data.php`,
                 type: "POST",
                 dataType: "json",
-                data: { data_id: dataId, type: label },
+                data: { data_id: dataId, type: label, part_id: partId, mat_code: matCode, mat_desc: matDesc },
                 success: function (response) {
                     if (!sessionValidityChecker(response, bomTable)) return;
 

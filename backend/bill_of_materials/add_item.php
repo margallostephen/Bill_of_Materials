@@ -5,6 +5,7 @@ require_once PHP_UTILS_PATH . 'isValidPostRequest.php';
 require_once CONFIG_PATH . 'db.php';
 require_once PHP_UTILS_PATH . 'getIPAddress.php';
 require_once PHP_HELPERS_PATH . 'sessionChecker.php';
+require_once __DIR__ . '/email_user_action.php';
 
 $data = $_POST['items'] ?? [];
 
@@ -258,7 +259,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $partIndex = ($row['PART_KEY'] ?? 0) + 1;
         $partSurrogate = "{$partSurrogateRaw}_{$partIndex}";
 
-        $itemGlobalData = [$item['customer'], $item['model'], $item['master_code']];
+        $itemGlobalData = [$item['customer'], $item['model'], $item['master_code'], $item['part_name'], $item['tool']];
+        $itemListEmail[] = $itemGlobalData;
 
         insertRowAllData($itemGlobalData, $item, $partSurrogate, $partIndex, $insertPart, $insertDetails, $insertWeightCt, $insertMc, $userRfid, $userIp, $createdAt);
 
@@ -279,6 +281,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $itemIndexWarningLabel++;
     }
+
+    sendUserActionEmail("add", $itemListEmail);
 
     $getMaxPartKey->close();
     $getMaxMaterialKey->close();

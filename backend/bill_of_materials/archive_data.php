@@ -5,6 +5,7 @@ require_once PHP_UTILS_PATH . 'isValidPostRequest.php';
 require_once CONFIG_PATH . 'db.php';
 require_once PHP_UTILS_PATH . 'getIPAddress.php';
 require_once PHP_HELPERS_PATH . 'sessionChecker.php';
+require_once __DIR__ . '/email_user_action.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userRfid   = $_SESSION['RFID'];
@@ -13,6 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $rowType = strtolower($_POST["type"]);
     $rowId   = (int) $_POST["data_id"];
+    $partId = $_POST["part_id"];
+    $matCode = $_POST["mat_code"];
+    $matDesc = $_POST["mat_desc"];
 
     $allowedTypes = ['part', 'material'];
     if (!in_array($rowType, $allowedTypes)) {
@@ -60,6 +64,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $bomMysqli->prepare($sql);
                 $stmt->bind_param("ssss", $userRfid, $userIp, $deletedAt, $surrogate);
             }
+
+            $partInfoEmail = explode('_', $partId);
+
+            $matInfo = $rowType == "part" ? [$matCode, $matDesc, ''] : explode('_', $surrogate);
+
+            $itemListEmail = [[
+                $partInfoEmail,
+                $rowType,
+                $matInfo
+            ]];
+
+            sendUserActionEmail("archive", $itemListEmail);
         } else {
             echo json_encode([
                 "status" => false,

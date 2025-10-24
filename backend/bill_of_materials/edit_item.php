@@ -5,6 +5,7 @@ require_once PHP_UTILS_PATH . 'isValidPostRequest.php';
 require_once CONFIG_PATH . 'db.php';
 require_once PHP_UTILS_PATH . 'getIPAddress.php';
 require_once PHP_HELPERS_PATH . 'sessionChecker.php';
+require_once __DIR__ . '/email_user_action.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $table = trim($_POST["table"]);
@@ -235,6 +236,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updateMaterialSurrogate->execute();
         $updateMaterialSurrogate->close();
     }
+
+    $partInfoEmail = explode('_', $partSurrogate);
+
+    $itemListEmail = [[
+        $partInfoEmail,
+        $rowType,
+        $columnTitle,
+        $previousValue,
+        $newValue,
+        $remarks
+    ]];
+
+    sendUserActionEmail("edit", $itemListEmail);
 
     echo json_encode([
         "status" => true,

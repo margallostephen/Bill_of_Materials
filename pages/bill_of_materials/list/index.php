@@ -839,7 +839,10 @@
                     RID_MC_5: mc5_id,
                     RID_MC_1_AP_4M: mc1_ap_id,
                     RID_MC_2_AP_4M: mc2_ap_id,
-                    DIVISION: division
+                    DIVISION: division,
+                    PART_SURROGATE: part_surrogate,
+                    CODE: mat_code,
+                    DESCRIPTION: mat_name
                 } = cell.getData();
 
                 const isPart = division == 1;
@@ -852,6 +855,9 @@
                     ${archiveVisible ? `
                         <button class="btn btn-sm btn-danger archiveBtn" 
                                 data-type="${isPart}" 
+                                data-part-id="${part_surrogate}"
+                                data-mat-code="${mat_code}"
+                                data-mat-desc="${mat_name}"
                                 data-type-id="${isPart ? p_id : m_id}">
                             <i class="fa fa-archive"></i> Archive
                         </button>
