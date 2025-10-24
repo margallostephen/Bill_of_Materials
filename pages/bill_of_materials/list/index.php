@@ -219,6 +219,7 @@
         $modalEdit.find("#materialSurrogate").val(rowData.MATERIAL_SURROGATE);
         $modalEdit.find("#rowId").val(rowId);
         $modalEdit.find("#previousValue").val(value);
+        $("#modalEditTitle").text(`Edit ${type == true ? "Item" : "Material"} ${title.toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}`);
         $(`#modalEdit`).modal("show");
     }
 

@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header" id="modalTop">
-                <h4 class="modal-title">Edit Item</h4>
+                <h4 class="modal-title" id="modalEditTitle">Edit Item</h4>
             </div>
             <form id="editItemForm">
                 <div class="modal-body">
