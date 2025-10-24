@@ -25,18 +25,20 @@
                             <span class="menu-text">List</span>
                         </a>
                     </li>
-                    <li class="sidebar-btn" id="list">
-                        <a href="<?php echo BASE_URL . 'bill_of_materials/revision' ?>">
-                            <i class="menu-icon fa fa-edit"></i>
-                            <span class="menu-text">Revision</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-btn" id="list">
-                        <a href="<?php echo BASE_URL . 'bill_of_materials/archived' ?>">
-                            <i class="menu-icon fa fa-box-archive"></i>
-                            <span class="menu-text">Archived</span>
-                        </a>
-                    </li>
+                    <?php if (in_array($_SESSION['RFID'], ['ADMIN', '180493', '800068'])): ?>
+                        <li class="sidebar-btn" id="list">
+                            <a href="<?php echo BASE_URL . 'bill_of_materials/revision' ?>">
+                                <i class="menu-icon fa fa-edit"></i>
+                                <span class="menu-text">Revision</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-btn" id="list">
+                            <a href="<?php echo BASE_URL . 'bill_of_materials/archived' ?>">
+                                <i class="menu-icon fa fa-box-archive"></i>
+                                <span class="menu-text">Archived</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </li>
         <?php endif; ?>
