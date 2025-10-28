@@ -83,27 +83,28 @@ function sendUserActionEmail($userAction, $data)
             $itemName = $data[0][0][1];
             $itemTool = $data[0][0][2];
 
-            $bodyContent .= '
-                The following changes have been made to the item in the Bill of Materials:
-                <br><br>
-                <table cellpadding="2" cellspacing="0" style="border-collapse: collapse;">
-                    <tr>
-                        <td style="font-weight: bold;">Item Code:</td>
-                        <td>' . $itemCode . '</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold;">Item Name:</td>
-                        <td>' . $itemName . '</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold;">Tool Number:</td>
-                        <td>' . $itemTool . '</td>
-                    </tr>
-                </table>
-                <br>
-            ';
-
             $type = $data[0][1] == 0 ? "Part" : "Material";
+
+            $bodyContent .= '
+                    The following changes have been made to the ' . ($type == "Material" ? "material under the " : "") . 'item in the Bill of Materials:
+                    <br><br>
+                    <table cellpadding="2" cellspacing="0" style="border-collapse: collapse;">
+                        <tr>
+                            <td style="font-weight: bold;">Item Code:</td>
+                            <td>' . $itemCode . '</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Item Name:</td>
+                            <td>' . $itemName . '</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Tool Number:</td>
+                            <td>' . $itemTool . '</td>
+                        </tr>
+                    </table>
+                    <br>
+                ';
+
 
             $bodyContent .= 'The ' . $type . ' info have been updated in the Bill of Materials:<br><br>';
             $bodyContent .= '<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse;">';
