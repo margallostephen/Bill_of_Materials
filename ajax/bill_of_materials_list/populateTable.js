@@ -1,4 +1,4 @@
-function populateTable(tabulatorObject, path, data = []) {
+function populateTable(tabulatorObject, path, refreshed = 0, data = []) {
     const tableId = $(tabulatorObject.element).attr("id");
     const tableElement = $(`#${tableId}`);
     const loaderElement = $("#loader");
@@ -7,6 +7,16 @@ function populateTable(tabulatorObject, path, data = []) {
     noDataElement.hide();
     tableElement.hide();
     loaderElement.show();
+
+    const $btn = $("#refreshTableBtn");
+    const $icon = $btn.find(".fa-solid.fa-refresh");
+    const $text = $("#btn-refresh-text");
+
+    if (refreshed) {
+        $btn.prop("disabled", true);
+        $icon.addClass("fa-spin");
+        $text.text(" Refreshing...");
+    }
 
     $.ajax({
         url: `${BACKEND_PATH}/${path}.php`,
@@ -35,11 +45,21 @@ function populateTable(tabulatorObject, path, data = []) {
                     loaderElement.hide();
                     noDataElement.hide();
                     tableElement.show();
+                    if (refreshed) {
+                        $icon.removeClass("fa-spin");
+                        $text.text("Refresh Table");
+                        $btn.prop("disabled", false);
+                    }
                 });
             } else {
                 loaderElement.hide();
                 tableElement.hide();
                 noDataElement.show();
+                if (refreshed) {
+                    $icon.removeClass("fa-spin");
+                    $text.text("Refresh Table");
+                    $btn.prop("disabled", false);
+                }
             }
         },
         error: (error) => {
