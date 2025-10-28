@@ -25,7 +25,7 @@
                             <span class="menu-text">List</span>
                         </a>
                     </li>
-                    <?php if (in_array($_SESSION['RFID'], ['ADMIN', '180493', '800068'])): ?>
+                    <?php if (in_array($_SESSION['RFID'], ['ADMIN', "1", "3", '180493', '800068'])): ?>
                         <li class="sidebar-btn" id="list">
                             <a href="<?php echo BASE_URL . 'bill_of_materials/revision' ?>">
                                 <i class="menu-icon fa fa-edit"></i>

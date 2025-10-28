@@ -9,11 +9,13 @@ function getUserAccess($bomMysqli)
         SELECT 
             m.MODULE_NAME,
             a.ACTION_NAME,
-            ua.IS_ALLOWED
-        FROM user_access_tb ua
-        JOIN modules_tb m ON ua.MODULE_RID = m.RID
-        JOIN actions_tb a ON ua.ACTION_RID = a.RID
-        WHERE ua.USER_RFID = ?
+            COALESCE(ua.IS_ALLOWED, 0) AS IS_ALLOWED
+        FROM modules_tb m
+        CROSS JOIN actions_tb a
+        LEFT JOIN user_access_tb ua 
+            ON ua.MODULE_RID = m.RID 
+            AND ua.ACTION_RID = a.RID 
+            AND ua.USER_RFID = ?
         ORDER BY m.MODULE_NAME, a.ACTION_NAME
     ";
 
@@ -26,7 +28,7 @@ function getUserAccess($bomMysqli)
     while ($row = $result->fetch_assoc()) {
         $module = $row['MODULE_NAME'];
         $action = $row['ACTION_NAME'];
-        $formatted[$module][$action] = (bool)$row['IS_ALLOWED'];
+        $formatted[$module][$action] = (int)$row['IS_ALLOWED']; // Always 0 or 1
     }
 
     return $formatted;
