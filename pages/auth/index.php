@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php require_once PARTIALS_PATH . '/header.php'; ?>
+<?php require_once PARTIALS_PATH . 'header.php'; ?>
 
 <link rel="stylesheet" href="<?php getCSSFile('login.css') ?>">
 
@@ -74,13 +74,13 @@
 
     <script>
         // Toggle between login and register
-        $("#showRegister").on("click", function (e) {
+        $("#showRegister").on("click", function(e) {
             e.preventDefault();
             $("#loginForm").hide();
             $("#registerForm").show();
         });
 
-        $("#showLogin").on("click", function (e) {
+        $("#showLogin").on("click", function(e) {
             e.preventDefault();
             $("#registerForm").hide();
             $("#loginForm").show();

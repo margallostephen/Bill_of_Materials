@@ -52,21 +52,21 @@ foreach ($routes as $definedPrefix => $roles) {
 
 if (is_null($allowedRoles)) {
     http_response_code(404);
-    include PAGES_PATH . '/error/404.php';
+    include PAGES_PATH . 'error/404.php';
     exit;
 }
 
 if (!in_array($userRole, $allowedRoles)) {
     http_response_code(403);
-    include PAGES_PATH . '/error/403.php';
+    include PAGES_PATH . 'error/403.php';
     exit;
 }
 
-$pagePath = PAGES_PATH . '/' . $route . '/index.php';
+$pagePath = PAGES_PATH . '' . $route . '/index.php';
 
 if (!file_exists($pagePath)) {
     http_response_code(404);
-    include PAGES_PATH . '/error/404.php';
+    include PAGES_PATH . 'error/404.php';
     exit;
 }
 

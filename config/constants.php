@@ -16,8 +16,8 @@ define('JS_PATH', BASE_URL . 'assets/js/');
 define('CSS_PATH', BASE_URL . 'assets/css/');
 define('IMAGES_URL', BASE_URL . 'assets/images/');
 
-define('PAGES_PATH', BASE_PATH . 'pages');
-define('PARTIALS_PATH', BASE_PATH . 'partials');
+define('PAGES_PATH', BASE_PATH . 'pages/');
+define('PARTIALS_PATH', BASE_PATH . 'partials/');
 
 define('BACKEND_PATH', BASE_URL . 'backend/');
 define('AJAX_PATH', BASE_URL . 'ajax/');

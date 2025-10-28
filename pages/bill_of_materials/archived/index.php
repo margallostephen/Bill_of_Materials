@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php require_once PARTIALS_PATH . '/header.php'; ?>
+<?php require_once PARTIALS_PATH . 'header.php'; ?>
+<?php require_once PHP_HELPERS_PATH . 'accessRights.php'; ?>
+<?php $access = getModuleAccess('BOM_LIST'); ?>
 
 <body class="no-skin">
-    <?php require_once PARTIALS_PATH . '/navbar.php'; ?>
+    <?php require_once PARTIALS_PATH . 'navbar.php'; ?>
     <div class="main-container ace-save-state" id="main-container">
-        <?php require_once PARTIALS_PATH . '/sidebar.php'; ?>
+        <?php require_once PARTIALS_PATH . 'sidebar.php'; ?>
         <div class="main-content">
             <div class="main-content-inner">
-                <?php require_once PARTIALS_PATH . '/breadcrumbs.php'; ?>
+                <?php require_once PARTIALS_PATH . 'breadcrumbs.php'; ?>
                 <div class="page-content">
                     <div class="row">
                         <div class="content-container">
@@ -51,7 +53,7 @@
                 </div>
             </div>
         </div>
-        <?php require_once PARTIALS_PATH . '/footer.php'; ?>
+        <?php require_once PARTIALS_PATH . 'footer.php'; ?>
     </div>
 </body>
 
@@ -65,6 +67,8 @@
 <script type="text/javascript" src="<?php getJSHelper('errorFunction.js') ?>"></script>
 
 <script type="text/javascript">
+    const unarchiveVisible = <?= json_encode($access['unarchive']) ?>;
+
     const archivedBomColumns = [{
             columns: [{
                     title: 'DIVISION',
@@ -511,6 +515,7 @@
             resizable: false,
             widthGrow: 0,
             cssClass: "action-column",
+            visible: unarchiveVisible,
             formatter: function(cell) {
                 const {
                     RID: id,
@@ -550,11 +555,14 @@
                     delete_status
                 };
 
-                return (row_type == 0 && part_delete_status == 1) || (row_type == 1 && part_delete_status == 0 && delete_status == 1) ? `
-                <button class="btn btn-sm btn-danger unarchiveBtn"
-                    data-row="${encodeURIComponent(JSON.stringify(rowData))}" >
-                    <i class="fa fa-archive"></i> Unarchive
-                </button>` : "";
+                return `
+                    ${unarchiveVisible && (row_type == 0 && part_delete_status == 1) || (row_type == 1 && part_delete_status == 0 && delete_status == 1) ? `
+                        <button class="btn btn-sm btn-danger unarchiveBtn"
+                            data-row="${encodeURIComponent(JSON.stringify(rowData))}" >
+                            <i class="fa fa-archive"></i> Unarchive
+                        </button>
+                    ` : ''}
+                `;
             },
             minWidth: 40
         }

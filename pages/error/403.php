@@ -1,4 +1,4 @@
-<?php require_once PARTIALS_PATH . '/errorHeader.php'; ?>
+<?php require_once PARTIALS_PATH . 'errorHeader.php'; ?>
 
 <body class="error-body">
     <div class="panel panel-danger">

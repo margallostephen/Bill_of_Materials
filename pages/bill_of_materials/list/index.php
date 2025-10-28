@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php require_once PARTIALS_PATH . '/header.php'; ?>
-<?php $canArchive = $_SESSION['ACCESS_RIGHTS']['BOM_LIST']['DELETE'] ?? false; ?>
+<?php require_once PARTIALS_PATH . 'header.php'; ?>
+<?php require_once PHP_HELPERS_PATH . 'accessRights.php'; ?>
+<?php $access = getModuleAccess('BOM_LIST'); ?>
 
 <body class="no-skin">
-    <?php require_once PARTIALS_PATH . '/navbar.php'; ?>
+    <?php require_once PARTIALS_PATH . 'navbar.php'; ?>
     <div class="main-container ace-save-state" id="main-container">
-        <?php require_once PARTIALS_PATH . '/sidebar.php'; ?>
+        <?php require_once PARTIALS_PATH . 'sidebar.php'; ?>
         <div class="main-content">
             <div class="main-content-inner">
-                <?php require_once PARTIALS_PATH . '/breadcrumbs.php'; ?>
+                <?php require_once PARTIALS_PATH . 'breadcrumbs.php'; ?>
                 <div class="page-content">
                     <div class="row">
                         <div class="content-container">
@@ -22,15 +23,15 @@
                                 <div class="widget-body">
                                     <div class="widget-main">
                                         <div class="p-4">
-                                            <div class="table-btn-container <?= !$canArchive ? 'right' : '' ?>">
-                                                <?php if (!empty($_SESSION['ACCESS_RIGHTS']['BOM_LIST']['ADD'])): ?>
+                                            <div class="table-btn-container <?= !$access['add'] ? 'right' : '' ?>">
+                                                <?php if ($access['add']): ?>
                                                     <button type="button" class="btn btn-sm btn-success" id="addBtn">
                                                         <i class="ace-icon fa fa-plus"></i>
                                                         <span>Add New Item</span>
                                                     </button>
                                                 <?php endif; ?>
                                                 <div class="side-btn-container">
-                                                    <?php if (!empty($_SESSION['ACCESS_RIGHTS']['BOM_LIST']['IMPORT'])): ?>
+                                                    <?php if ($access['import']): ?>
                                                         <button type="button" class="btn btn-sm btn-primary"
                                                             id="importExcelBtn">
                                                             <i class="ace-icon fa fa-upload"></i>
@@ -39,11 +40,19 @@
                                                             </span>
                                                         </button>
                                                     <?php endif; ?>
-                                                    <button type="button" class="btn btn-sm btn-success"
-                                                        id="exportExcelBtn">
-                                                        <i class="ace-icon fa fa-download"></i>
-                                                        <span>
-                                                            Export Data
+                                                    <?php if ($access['export']): ?>
+                                                        <button type="button" class="btn btn-sm btn-success"
+                                                            id="exportExcelBtn">
+                                                            <i class="ace-icon fa fa-download"></i>
+                                                            <span>
+                                                                Export Data
+                                                            </span>
+                                                        </button>
+                                                    <?php endif; ?>
+                                                    <button class="btn btn-sm btn-white" id="refreshTableBtn">
+                                                        <i class="fa-solid fa-refresh"></i>
+                                                        <span id="btn-refresh-text">
+                                                            Refresh Table
                                                         </span>
                                                     </button>
                                                     <button class="btn btn-sm btn-warning" id="clearAllFilterBtn"
@@ -74,7 +83,7 @@
                 </div>
             </div>
         </div>
-        <?php require_once PARTIALS_PATH . '/footer.php'; ?>
+        <?php require_once PARTIALS_PATH . 'footer.php'; ?>
     </div>
 
     <?php require_once 'modals/importModal.php'; ?>
@@ -90,6 +99,7 @@
 <script type="text/javascript" src="<?php getAjaxPath('bill_of_materials_archived/archiveRow.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('createTable.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('dataTreeInputFilter.js') ?>"></script>
+<script type="text/javascript" src="<?php getJSHelper('treeSelectFilterValue.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('addResetFilter.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('dateRangePicker.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('resetLoader.js') ?>"></script>
@@ -97,7 +107,10 @@
 <script type="text/javascript" src="<?php getJSHelper('resetModal.js') ?>"></script>
 <script type="text/javascript" src="<?php getJSHelper('errorFunction.js') ?>"></script>
 <script type="text/javascript">
-    const archiveVisible = <?= json_encode($canArchive) ?>;
+    const userLoggedIn = <?= json_encode($_SESSION['RFID']) ?>;
+    const archiveVisible = <?= json_encode($access['archive']) ?>;
+    const canEdit = <?= json_encode($access['edit']) ?>;
+    const canCopy = <?= json_encode($access['copy']) ?>;
 
     function setCellAttr(cell, table, column = "") {
         const el = cell.getElement();
@@ -112,6 +125,8 @@
     }
 
     function cellClick(e, cell) {
+        if (!canEdit) return;
+
         const rowData = cell.getRow().getData();
         const value = cell.getValue();
         const title = cell.getColumn().getDefinition().title;
@@ -240,11 +255,11 @@
                     headerFilter: "input",
                     headerFilterFunc: deepMatchHeaderFilter,
                     headerFilterFuncParams: {
-                        columnName: "DIVISION"
+                        columnName: "DIVISION",
+                        matchType: "exact"
                     },
                     cellDblClick: cellClick,
                     cssClass: "clickable-cell"
-
                 },
                 {
                     title: 'CUSTOMER',
@@ -254,7 +269,7 @@
                     headerFilter: "list",
                     headerFilterPlaceholder: "Select",
                     headerFilterParams: {
-                        valuesLookup: true,
+                        valuesLookup: (c) => treeSelectFilterValues(c)
                     },
                     headerFilterFunc: deepMatchHeaderFilter,
                     headerFilterFuncParams: {
@@ -264,7 +279,6 @@
                     formatter: cell => setCellAttr(cell, "part"),
                     cellDblClick: cellClick,
                     cssClass: "clickable-cell"
-
                 },
                 {
                     title: 'MODEL',
@@ -279,7 +293,6 @@
                     formatter: cell => setCellAttr(cell, "part"),
                     cellDblClick: cellClick,
                     cssClass: "clickable-cell"
-
                 },
                 {
                     title: 'MASTER CODE',
@@ -288,13 +301,12 @@
                     vertAlign: "middle",
                     headerFilter: "input",
                     headerFilterFunc: deepMatchHeaderFilter,
-                    formatter: cell => setCellAttr(cell, "part"),
                     headerFilterFuncParams: {
                         columnName: "PART_CODE"
                     },
+                    formatter: cell => setCellAttr(cell, "part"),
                     cellDblClick: cellClick,
                     cssClass: "clickable-cell"
-
                 },
                 {
                     title: 'ERP CODE',
@@ -309,7 +321,6 @@
                     formatter: cell => setCellAttr(cell, "part"),
                     cellDblClick: cellClick,
                     cssClass: "clickable-cell"
-
                 },
                 {
                     title: 'PART CODE',
@@ -324,7 +335,6 @@
                     formatter: cell => setCellAttr(cell, "material", "MATERIAL_CODE"),
                     cellDblClick: cellClick,
                     cssClass: "clickable-cell"
-
                 },
                 {
                     title: 'PART NAME',
@@ -338,7 +348,6 @@
                     },
                     cellDblClick: cellClick,
                     cssClass: "clickable-cell"
-
                 },
                 {
                     title: 'PROCESS',
@@ -348,12 +357,15 @@
                     headerFilter: "list",
                     headerFilterPlaceholder: "Select",
                     headerFilterParams: {
-                        valuesLookup: true,
+                        valuesLookup: (c) => treeSelectFilterValues(c)
+                    },
+                    headerFilterFunc: deepMatchHeaderFilter,
+                    headerFilterFuncParams: {
+                        columnName: "PROCESS"
                     },
                     formatter: cell => setCellAttr(cell, "details"),
                     cellDblClick: cellClick,
                     cssClass: "clickable-cell"
-
                 },
                 {
                     title: 'CLASS',
@@ -363,22 +375,33 @@
                     headerFilter: "list",
                     headerFilterPlaceholder: "Select",
                     headerFilterParams: {
-                        valuesLookup: true,
+                        valuesLookup: (c) => treeSelectFilterValues(c)
+                    },
+                    headerFilterFunc: deepMatchHeaderFilter,
+                    headerFilterFuncParams: {
+                        columnName: "CLASS"
                     },
                     formatter: cell => setCellAttr(cell, "details"),
                     cellDblClick: cellClick,
                     cssClass: "clickable-cell"
-
                 },
                 {
                     title: 'SUPPLIER',
                     field: 'SUPPLIER',
                     hozAlign: "middle",
                     vertAlign: "middle",
+                    headerFilter: "list",
+                    headerFilterPlaceholder: "Select",
+                    headerFilterParams: {
+                        valuesLookup: (c) => treeSelectFilterValues(c)
+                    },
+                    headerFilterFunc: deepMatchHeaderFilter,
+                    headerFilterFuncParams: {
+                        columnName: "SUPPLIER"
+                    },
                     formatter: cell => setCellAttr(cell, "details"),
                     cellDblClick: cellClick,
                     cssClass: "clickable-cell"
-
                 },
                 {
                     title: 'USAGE',
@@ -387,20 +410,34 @@
                             field: "QTY",
                             hozAlign: "right",
                             vertAlign: "middle",
+                            headerFilter: "input",
+                            headerFilterFunc: deepMatchHeaderFilter,
+                            headerFilterFuncParams: {
+                                columnName: "QTY",
+                                matchType: "exact"
+                            },
                             formatter: cell => setCellAttr(cell, "details"),
                             cellDblClick: cellClick,
                             cssClass: "clickable-cell"
-
                         },
                         {
                             title: "UNIT",
                             field: "UNIT",
                             hozAlign: "middle",
                             vertAlign: "middle",
+                            headerFilter: "list",
+                            headerFilterPlaceholder: "Select",
+                            headerFilterParams: {
+                                valuesLookup: (c) => treeSelectFilterValues(c)
+                            },
+                            headerFilterFunc: deepMatchHeaderFilter,
+                            headerFilterFuncParams: {
+                                columnName: "UNIT",
+                                matchType: "exact"
+                            },
                             formatter: cell => setCellAttr(cell, "details"),
                             cellDblClick: cellClick,
                             cssClass: "clickable-cell"
-
                         }
                     ]
                 },
@@ -412,12 +449,15 @@
                     headerFilter: "list",
                     headerFilterPlaceholder: "Select",
                     headerFilterParams: {
-                        valuesLookup: true,
+                        valuesLookup: (c) => treeSelectFilterValues(c)
+                    },
+                    headerFilterFunc: deepMatchHeaderFilter,
+                    headerFilterFuncParams: {
+                        columnName: "STATUS"
                     },
                     formatter: cell => setCellAttr(cell, "details"),
                     cellDblClick: cellClick,
                     cssClass: "clickable-cell"
-
                 },
                 {
                     title: 'MOLD',
@@ -429,7 +469,12 @@
                             headerFilter: "list",
                             headerFilterPlaceholder: "Select",
                             headerFilterParams: {
-                                valuesLookup: true,
+                                valuesLookup: (c) => treeSelectFilterValues(c)
+                            },
+                            headerFilterFunc: deepMatchHeaderFilter,
+                            headerFilterFuncParams: {
+                                columnName: "CAV_NUM",
+                                matchType: "exact"
                             },
                             formatter: cell => {
                                 const el = cell.getElement();
@@ -441,7 +486,6 @@
                             },
                             cellDblClick: cellClick,
                             cssClass: "clickable-cell"
-
                         },
                         {
                             title: "TOOL",
@@ -451,12 +495,15 @@
                             headerFilter: "list",
                             headerFilterPlaceholder: "Select",
                             headerFilterParams: {
-                                valuesLookup: true,
+                                valuesLookup: (c) => treeSelectFilterValues(c)
+                            },
+                            headerFilterFunc: deepMatchHeaderFilter,
+                            headerFilterFuncParams: {
+                                columnName: "TOOL_NUM"
                             },
                             formatter: cell => setCellAttr(cell, "details"),
                             cellDblClick: cellClick,
                             cssClass: "clickable-cell"
-
                         }
                     ]
                 },
@@ -485,7 +532,12 @@
                             headerFilter: "list",
                             headerFilterPlaceholder: "Select",
                             headerFilterParams: {
-                                valuesLookup: true,
+                                valuesLookup: (c) => treeSelectFilterValues(c)
+                            },
+                            headerFilterFunc: deepMatchHeaderFilter,
+                            headerFilterFuncParams: {
+                                columnName: "LABEL_CUSTOMER",
+                                matchType: "exact"
                             },
                             formatter: cell => setCellAttr(cell, "details"),
                             cellDblClick: cellClick,
@@ -798,7 +850,11 @@
             headerFilter: "list",
             headerFilterPlaceholder: "Select",
             headerFilterParams: {
-                valuesLookup: true,
+                valuesLookup: (c) => treeSelectFilterValues(c)
+            },
+            headerFilterFuncParams: {
+                columnName: "REGISTERED_BY",
+                matchType: "exact"
             },
             cssClass: "not-clickable",
         },
@@ -898,6 +954,10 @@
         },
     );
 
+    $("#refreshTableBtn").on("click", function() {
+        populateTable(bomTable, "bill_of_materials/get_data", 1);
+    });
+
     $(document).ready(function() {
         populateTable(bomTable, "bill_of_materials/get_data");
         addResetFilter(bomTable);
@@ -907,5 +967,6 @@
         modalClose("closeModalBtn");
     });
 </script>
+<script type="text/javascript" src="<?php getJSHelper('dataRestriction.js') ?>"></script>
 
 </html>
