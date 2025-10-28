@@ -40,4 +40,11 @@ $(function () {
     resize();
     $(window).on("resize", resize);
     new ResizeObserver(resize).observe($table[0]);
+
+    $("#bomTable, #revisionTable").css({
+        "-webkit-user-select": "none",
+        "-moz-user-select": "none",
+        "-ms-user-select": "none",
+        "user-select": "none"
+    });
 });

@@ -201,14 +201,6 @@ h2 {
   font-size: 15px;
 }
 
-#bomTable,
-#revisionTable {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
 img {
   pointer-events: none;
 }
