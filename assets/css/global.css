@@ -6,6 +6,7 @@ body {
 body,
 html {
   min-height: 0;
+  overflow-x: hidden;
 }
 
 h2 {
@@ -109,10 +110,6 @@ h2 {
   justify-content: end !important;
 }
 
-.tabulator .tabulator-col[tabulator-field="SUPPLIER"] {
-  justify-content: center !important;
-}
-
 .tabulator .tabulator-col[tabulator-field="QTY"],
 .tabulator .tabulator-col[tabulator-field="UNIT"],
 .tabulator .tabulator-col[tabulator-field="REMARKS"] {
@@ -204,12 +201,27 @@ h2 {
   font-size: 15px;
 }
 
-#department-table>div.tabulator-footer {
-  overflow-x: auto;
+#bomTable,
+#revisionTable {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+img {
+  pointer-events: none;
+}
+
+@media print {
+  body {
+    display: none;
+  }
 }
 
 .tabulator .tabulator-row .tabulator-cell {
   border: none !important;
+  min-height: 37px;
   border-right: solid 1px #ced4da !important;
 }
 
